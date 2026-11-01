@@ -1,0 +1,10 @@
+D:\programm\Java\jdk1.3\bin\javac linasMainProg.java
+D:\programm\Java\jdk1.3\bin\javac linasComunication.java
+D:\programm\Java\jdk1.3\bin\javac linasConection.java
+D:\programm\Java\jdk1.3\bin\javac linasMainFrame.java
+D:\programm\Java\jdk1.3\bin\javac linasSetFrame.java
+D:\programm\Java\jdk1.3\bin\javac Unit.java
+D:\programm\Java\jdk1.3\bin\javac linasPrepareFrame.java
+D:\programm\Java\jdk1.3\bin\javac linasSpielfeld.java
+D:\programm\Java\jdk1.3\bin\javac Operations.java
+D:\programm\Java\jdk1.3\bin\java.exe linasMainProg
