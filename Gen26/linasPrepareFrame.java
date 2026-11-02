@@ -45,8 +45,8 @@ public class linasPrepareFrame extends JFrame implements ActionListener
 		{	Out = new ObjectOutputStream (So.getOutputStream());}
 		catch (IOException e1)	{	System.out.println (e1);}
 		
-		iHeading = new ImageIcon ("linasHeaderS.gif");			lHeading = new JLabel (iHeading);
-		iArrayT = new ImageIcon ("ArrayTop.gif");			iArrayB = new ImageIcon ("ArrayBottom.gif");	
+		iHeading = new ImageIcon (linasPrepareFrame.class.getResource ("/linasHeaderS.gif"));			lHeading = new JLabel (iHeading);
+		iArrayT = new ImageIcon (linasPrepareFrame.class.getResource ("/ArrayTop.gif"));			iArrayB = new ImageIcon (linasPrepareFrame.class.getResource ("/ArrayBottom.gif"));
 		lNumberPan = new JLabel ("Panzer (50): 0");			lNumberArt = new JLabel ("Artillerie (80): 0");	
 		lNumberAuf = new JLabel ("Aufklärer (35): 0");			lPoints = new JLabel ("Punkte: 540");
 		bNumberPanP = new JButton (iArrayT);				bNumberPanM = new JButton (iArrayB);

@@ -10,18 +10,18 @@ import java.util.*;
 
 public class linasSpielfeld extends JComponent
 {
-	Image hexa = getToolkit ().getImage ("Spielbrett.gif");
-	Image ESelected = getToolkit ().getImage ("Selected.gif");
-	Image Turn = getToolkit ().getImage ("Turn.gif");
+	Image hexa = getToolkit ().getImage (linasSpielfeld.class.getResource ("/Spielbrett.gif"));
+	Image ESelected = getToolkit ().getImage (linasSpielfeld.class.getResource ("/Selected.gif"));
+	Image Turn = getToolkit ().getImage (linasSpielfeld.class.getResource ("/Turn.gif"));
 	//Schadensmodelle
-	Image perCent100 = getToolkit ().getImage ("100perCent.gif");
-	Image perCent75 = getToolkit ().getImage ("75perCent.gif");
-	Image perCent50 = getToolkit ().getImage ("50perCent.gif");
-	Image perCent25 = getToolkit ().getImage ("25perCent.gif");
-	Image perCent00 = getToolkit ().getImage ("00perCent.gif");
-	Image destroyed = getToolkit ().getImage ("Schrott.gif");
+	Image perCent100 = getToolkit ().getImage (linasSpielfeld.class.getResource ("/100perCent.gif"));
+	Image perCent75 = getToolkit ().getImage (linasSpielfeld.class.getResource ("/75perCent.gif"));
+	Image perCent50 = getToolkit ().getImage (linasSpielfeld.class.getResource ("/50perCent.gif"));
+	Image perCent25 = getToolkit ().getImage (linasSpielfeld.class.getResource ("/25perCent.gif"));
+	Image perCent00 = getToolkit ().getImage (linasSpielfeld.class.getResource ("/00perCent.gif"));
+	Image destroyed = getToolkit ().getImage (linasSpielfeld.class.getResource ("/Schrott.gif"));
 	
-	Image Explosion = getToolkit ().getImage ("Explosion2.gif");
+	Image Explosion = getToolkit ().getImage (linasSpielfeld.class.getResource ("/Explosion2.gif"));
 	Image [] IMG;
 	Color cBlue = new Color (41, 41, 255);
 	
@@ -52,25 +52,25 @@ public class linasSpielfeld extends JComponent
 		{	for (int i = 0; i < UN1; i++)
 			{				
 				if ((UA [i].type).equals ("Panzer"))
-				{	IMG [i] = getToolkit ().getImage ("PanzerPlayer1.gif");}
+				{	IMG [i] = getToolkit ().getImage (linasSpielfeld.class.getResource ("/PanzerPlayer1.gif"));}
 
 				if ((UA [i].type).equals ("Artillerie"))
-				{	IMG [i] = getToolkit ().getImage ("ArtilleriePlayer1.gif");}
+				{	IMG [i] = getToolkit ().getImage (linasSpielfeld.class.getResource ("/ArtilleriePlayer1.gif"));}
 				
 				if ((UA [i].type).equals ("Aufklärer"))
-				{	IMG [i] = getToolkit ().getImage ("AufklaererPlayer1.gif");}
+				{	IMG [i] = getToolkit ().getImage (linasSpielfeld.class.getResource ("/AufklaererPlayer1.gif"));}
 			}
 
 			for (int j = UN1; j < UA.length; j++)
 			{
 				if ((UA [j].type).equals ("Panzer"))
-				{	IMG [j] = getToolkit ().getImage ("PanzerPlayer2.gif");}
+				{	IMG [j] = getToolkit ().getImage (linasSpielfeld.class.getResource ("/PanzerPlayer2.gif"));}
 
 				if ((UA [j].type).equals ("Artillerie"))
-				{	IMG [j] = getToolkit ().getImage ("ArtilleriePlayer2.gif");}
+				{	IMG [j] = getToolkit ().getImage (linasSpielfeld.class.getResource ("/ArtilleriePlayer2.gif"));}
 				
 				if ((UA [j].type).equals ("Aufklärer"))
-				{	IMG [j] = getToolkit ().getImage ("AufklaererPlayer2.gif");}
+				{	IMG [j] = getToolkit ().getImage (linasSpielfeld.class.getResource ("/AufklaererPlayer2.gif"));}
 			}
 		}
 		catch (NullPointerException e)

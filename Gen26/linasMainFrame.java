@@ -46,7 +46,7 @@ public class linasMainFrame extends JFrame implements ActionListener, KeyListene
 		this.Out = Out;
 		System.out.println (who);
 
-		iHeading = new ImageIcon ("linasHeader.gif");	lHeading = new JLabel (iHeading);
+		iHeading = new ImageIcon (linasMainFrame.class.getResource ("/linasHeader.gif"));	lHeading = new JLabel (iHeading);
 		lInfoPlayer = new JLabel ("Spieler:");		lInfoPlayerV = new JLabel ("--");
 		lInfoUnit = new JLabel ("Einheit:");		lInfoUnitV = new JLabel ("--");
 		lInfoTP = new JLabel ("Trefferpunkte:");	lInfoTPV = new JLabel ("--");

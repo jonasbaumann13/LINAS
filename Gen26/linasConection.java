@@ -31,7 +31,7 @@ public class linasConection extends JFrame implements ActionListener
 		lWelcome1 = new JLabel ("Wilkommen bei LINAS! Bitte geben Sie eine IP-Adresse ein, ");
 		lWelcome2 = new JLabel ("wenn Sie einem Spiel beitreten wollen.");
 		lIP = new JLabel ("IP: ");					TIP = new JTextField (20);
-		iHeading = new ImageIcon ("linasHeaderS.gif");			lHeading = new JLabel (iHeading);
+		iHeading = new ImageIcon (linasConection.class.getResource ("/linasHeaderS.gif"));			lHeading = new JLabel (iHeading);
 		bServer = new JButton ("Spiel eröffnen");			bClient = new JButton ("Spiel beitreten");
 		msg = new Message ();
 		

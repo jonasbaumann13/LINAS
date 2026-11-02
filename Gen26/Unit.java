@@ -7,7 +7,7 @@ import java.util.*;
 /* In dieser Klasse werden die Daten jeder einzelnen Einheit festgehalten
  */
  
-public class Unit //implements Serializable
+public class Unit implements Serializable
 {
 	public int PosX = 0, PosY = 0;								// Position im Spielfeld
 	public int TP, basicTP, RW, minRW, Dam, ZPpF, ZPpS, ZP, basicZP, sight, AreaDamageRW;

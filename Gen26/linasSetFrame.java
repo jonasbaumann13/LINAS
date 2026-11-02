@@ -44,7 +44,7 @@ public class linasSetFrame extends JFrame implements ActionListener, MouseListen
 		this.who = who;
 		this.Out = Out;
 	
-		iHeading = new ImageIcon ("linasHeader.gif");		lHeading = new JLabel (iHeading);
+		iHeading = new ImageIcon (linasSetFrame.class.getResource ("/linasHeader.gif"));		lHeading = new JLabel (iHeading);
 		lInfoPlayer = new JLabel ("Spieler:");			lInfoPlayerV = new JLabel ("");
 		lInfoUnit = new JLabel ("Einheit:");			lInfoUnitV = new JLabel ("");
 		lLeftU1 = new JLabel ("Verfügbare Einheiten:");		lLeftU2 = new JLabel ("Panzer:");
