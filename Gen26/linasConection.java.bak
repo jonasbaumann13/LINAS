@@ -1,0 +1,196 @@
+import java.io.*;
+import java.awt.*;
+import java.util.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.net.* ;
+
+/*	Diese Klasse ist verantwortlich für den Aufbau des ersten Frames und der Verbindung zwischen
+ *	Server und Client.
+ */
+
+public class linasConection extends JFrame implements ActionListener
+{
+	// Layoutkomponenten
+	JPanel contentPane;
+	JTextField TIP;
+	JLabel [] JLA = new JLabel [4];
+	JButton [] JBA = new JButton [3];
+	ImageIcon iHeading;
+	Color C = Color.black;
+	Color CExit = Color.red;
+	Font F = new Font ("Garamond", 1, 14);
+		
+	// andere Komponenten
+	int anzUnitFiles = 6;
+	ObjectOutputStream Out = null;
+	ObjectInputStream In = null;
+	FileOutputStream FOS = null;
+	BufferedInputStream BIS = null;
+
+	KeyAdapter KA = null;
+	ServerSocket SerSo = null ;
+	Socket So = null ;
+	String who = "";
+	Message msg;						//Klasse für Fehlermeldungen
+	Unit [] basicUnitInfo;
+	Operations op;
+	
+/*********** - Layoutaufbau im Constructor - ***********/	
+	
+	public linasConection ()					
+	{
+		op = new Operations ();
+		this.setSize (new Dimension (400, 400));			this.setTitle ("Linas Anmeldung");
+		contentPane = (JPanel) this.getContentPane ();			contentPane.setLayout (null);
+		contentPane.setBackground (new Color (213, 222, 242));		msg = new Message ();
+		basicUnitInfo = new Unit [anzUnitFiles*2];
+		
+		for (int b2 = 0; b2 < 3; b2++)
+		{
+			JBA [b2] = new JButton ("");
+			JBA [b2].setFont (F);
+			JBA [b2].setForeground (C);
+			JBA [b2].addActionListener (this);
+			contentPane.add (JBA [b2]);
+		}
+		JBA [2].setForeground (CExit);
+		for (int i2 = 0; i2 < 4; i2++)
+		{
+			JLA [i2] = new JLabel ("");
+			JLA [i2].setFont (F);
+			JLA [i2].setForeground (C);
+			contentPane.add (JLA [i2]);
+		}
+		
+		iHeading = new ImageIcon ("Pics/linasHeaderS.gif");
+		JLA [0].setIcon (iHeading);
+		JLA [1].setText ("Geben Sie eine IP-Adresse ein, ");
+		JLA [2].setText ("wenn Sie einem Spiel beitreten wollen.");
+		JLA [3].setText ("IP: ");					TIP = new JTextField (20);			TIP.setText ("localhost");
+		JBA [0].setLabel ("Spiel eröffnen");				JBA [1].setLabel ("Spiel beitreten");
+										JBA [2].setLabel ("Beenden");					
+		
+		JLA [0].setBounds (25, 20, 340, 65);				
+		JLA [1].setBounds (20, 120, 350, 25);
+		JLA [2].setBounds (20, 145, 350, 25);
+		JLA [3].setBounds (20, 220, 30, 25);				TIP.setBounds (70, 220, 100, 20);
+		JBA [0].setBounds (20, 280, 150, 25);				JBA [1].setBounds (200, 280, 150, 25);
+										JBA [2].setBounds (200, 330, 150, 25);
+		contentPane.add (TIP);
+	}
+	
+/*********** - Programmende, wenn das Fenster geschlossen wird - ***********/
+
+	protected void processWindowEvent (WindowEvent e)
+	{
+		super.processWindowEvent (e);
+		if (e.getID () == WindowEvent.WINDOW_CLOSING)
+		{	System.exit (0);}							
+	}											
+
+/*********** - Reaktion auf Buttonklicks - ***********/	
+	
+	public void actionPerformed (ActionEvent e)
+	{
+		try
+		{
+			Object o = e.getSource ();
+			if (o.equals (JBA [0]))		Server ();		// --> Methode nur für Server
+			if (o.equals (JBA [1]))		Client ();		// --> Methode nur für Client
+			if (o.equals (JBA [2]))		System.exit (0);	// Beenden
+			if (So != null)						//wenn Verbindug vorhanden...
+			{
+				Out = new ObjectOutputStream (So.getOutputStream ());
+				In = new ObjectInputStream (So.getInputStream ());
+				linasComunication Com = new linasComunication (Out, In, who, anzUnitFiles, basicUnitInfo, this.getBounds ().x, this.getBounds ().y);
+				Com.start ();					//...Thread für Datenübertragung starten
+				this.setVisible (false);
+			}
+		}
+		
+		catch (IOException ioe)			{System.out.println (ioe);}
+		catch (NullPointerException npe)	{System.out.println ("Null Pointer");}					
+	}
+	
+/*********** - auf Verbindung warten und Socket holen (nur Server) - ***********/	
+	
+	public void Server ()
+	{
+		try
+		{
+			copyUnitFiles ();
+			this.setVisible (false);
+			System.out.println ("\n\n Warte auf Verbindung 1111... \n\n");
+			SerSo = new ServerSocket (1111);			
+			So = SerSo.accept ();					//Wartet auf einen Client, um Socket zu bekommen
+			who = "server";
+		}
+		catch(SocketException e)	{System.out.println (e);}
+		catch(Exception f)		{System.out.println (f);}			
+	} 
+	
+/*********** - Socket erstellen, um Verbindung mit Server aufzubauen (nur Client) - ***********/	
+	
+	public void Client ()
+	{
+		String IP;
+		if ((IP = TIP.getText ()).equals (""))
+		{	msg.msgError ("Bitte eine IP-Adresse eingeben", this);}
+		else
+		{
+			try
+			{
+				System.out.println ("\n\n Verbindungsaufbau... \n\n");
+				So = new Socket (IP, 1111);
+				who = "client";
+			}
+			catch(Exception g)	 
+			{	
+				System.out.println (g);
+				JLA [2].setText ("Verbindungsaufbau fehlgeschlagen! \n");
+			}
+		}
+	}
+	
+/*********** - kopiert die gebrauchten Einheiten in einen tmp Ordner - ***********/
+	
+	public void copyUnitFiles ()
+	{
+		System.out.println ("1");
+		for (int i0 = 0; i0 < anzUnitFiles; i0++)
+		{	basicUnitInfo[i0] = op.setUnit ((i0+1), "noname", "server");}
+		for (int i0 = anzUnitFiles; i0 < anzUnitFiles*2; i0++)
+		{	basicUnitInfo[i0] = op.setUnit (((i0-anzUnitFiles)+1), "noname", "client");}
+		System.out.println ("2");		
+		int counter;
+		for (int i1 = 0; i1 < anzUnitFiles*2; i1++)
+		{
+			for (int i2 = 1; i2 < basicUnitInfo[i1].pictureA.length; i2++)
+			{
+				if (!basicUnitInfo[i1].pictureA[i2].equals (""))
+				{
+					try
+					{
+						BIS = new BufferedInputStream (new FileInputStream ("Pics/" + basicUnitInfo[i1].pictureA[i2]));
+						FOS = new FileOutputStream (("tmp/" + basicUnitInfo[i1].pictureA[i2]), true);
+						System.out.println ("3");
+						counter = BIS.available ();
+						while (counter != 0)
+						{	
+							FOS.write (BIS.read ());
+							counter -= 1;
+						}
+						System.out.println ("4");
+						BIS.close ();
+						FOS.close ();
+						FOS = null;
+						BIS = null;
+					}
+					catch (FileNotFoundException e1) 	{System.out.println (e1);}
+					catch (IOException e2) 			{System.out.println (e2);}
+				}
+			}	
+		}	
+	}
+}

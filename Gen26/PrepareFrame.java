@@ -1,0 +1,362 @@
+import java.io.*;
+import java.awt.*;
+import java.util.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.net.*;
+
+/* In dieser Klasse wird von den Spielern festgelegt, mit wie vielen von jeder Sorte an Einheiten
+ * Sie gegen den anderen Spieler antreten wollen. Jeder hat eine bestimmte Anzahl an Punkten und muss
+ * davon die unterschiedlich teuren Einheiten kaufen.
+ * Außerdem wird dann das komplette Einheitenfeld erstellt, welches also die Einheiten beider Spieler
+ * enthält
+ */
+
+public class PrepareFrame extends JFrame implements ActionListener
+{
+	//Layoutkomponenten
+	JPanel contentPane;
+	JLabel [] lNumberU;
+	JLabel [] lU;
+	JLabel [] lPicU;
+	JLabel lHeading, lcredits;
+	JButton bStart, bExit;
+	JButton [] bNumberU;
+	ImageIcon [] iPicU;
+	ImageIcon iHeading, iArrayT, iArrayB;
+	Cursor curDef 			= new Cursor (DEFAULT_CURSOR);
+	Cursor curHan 			= new Cursor (HAND_CURSOR);
+	Color C 				= Color.black;
+	Color CExit 			= Color.red;
+	Color CBlue 			= new Color (41, 41, 255);
+	Font F 					= new Font ("Garamond", 1, 14);
+	Font FP 				= new Font ("Verdana", 1, 16);
+	
+	//andere Komponenten
+	KeyAdapter KA 			= null;
+	MouseAdapter [] MA;
+	String nick 			= "";					// Name des Spielers und ob Server oder Client
+	ObjectOutputStream Out 	= null;
+	Object [] forSending 	= new Object [2];		// Objekt, welches bei Bedarf gesendet wird
+	int anzUnitFiles 		= 0;
+	int credits;									// Anzahl der Punkte um Einheiten zu "kaufen"
+	int UnitNum 			= 0;					// Anzahl der Einheiten eines Spielers
+	int [] Num 				= {0, 0, 0, 0, 0, 0};	// Anzahl der Einheiten (Panzer, Artillerie, Aufklärer, TeamAT, TeamMörser, TeamMG)
+	boolean IsServer;
+
+	Unit [] BspU;
+	Unit [] UnitArray, tmpUA;						// tmpUA ist für das spätere zusammenschließen der beiden Felder (von Spieler 1 und 2)
+	Message msg;									// Klasse für Fehlermeldungen
+	Operations op;									// Methodensammlung
+	Description lD;
+	
+
+/*********** - Layoutaufbau im Constructor und spezifische Starteinstellungen - ***********/
+
+	public PrepareFrame (ObjectOutputStream Out, boolean IsServer, Unit [] BspUtmp, int anzUnitFilestmp, int credits, String nick)
+	{
+		this.Out 			= Out;
+		this.IsServer		= IsServer;
+		BspU 				= BspUtmp;
+		anzUnitFiles 	= anzUnitFilestmp;
+		this.credits		= credits;
+		this.nick			= nick;
+		
+	//******---------******\\
+		
+		MA 			= new MouseAdapter [anzUnitFiles];
+		op 			= new Operations ();
+		lPicU 		= new JLabel [anzUnitFiles];
+		iPicU 		= new ImageIcon [anzUnitFiles];
+		lNumberU	= new JLabel [anzUnitFiles];
+		lU 			= new JLabel [anzUnitFiles];
+		bNumberU 	= new JButton [anzUnitFiles*2];
+				
+		for (int i0 = 0; i0 < anzUnitFiles; i0++)
+		{	
+			if (IsServer)	BspU [i0].Picture = BspU [i0].pictureAS[0];
+			else			BspU [i0].Picture = BspU [i0].pictureAC[0];
+		}		
+		
+		iHeading 	= new ImageIcon ("Pics/linasHeaderS.gif");		lHeading 	= new JLabel (iHeading);
+		iArrayT 	= new ImageIcon ("Pics/ArrayTop.gif");			iArrayB 	= new ImageIcon ("Pics/ArrayBottom.gif");
+		
+	//******graphische Instanzierung******\\
+		for (int j = 0; j < anzUnitFiles; j++)
+		{	
+			lU [j] 			= new JLabel ("(" + BspU [j].price + ") " + BspU [j].type + " (" + BspU [j].DamType + ")");
+			lU [j].setFont (F);
+			lU [j].setForeground (C);
+			lNumberU [j] 	= new JLabel ("" + Num [j]);
+			lNumberU [j].setFont (F);
+			lNumberU [j].setForeground (C);
+			lPicU [j] 		= new JLabel ();
+			iPicU [j] 		= new ImageIcon ("Units/" + BspU [j].Picture);		//hier!!!
+			lPicU [j].setIcon (iPicU [j]);
+			lPicU [j].setFocusable (false);
+			lPicU [j].setToolTipText ("Beschreibung...");
+		}
+		for (int k1 = 0; k1 < anzUnitFiles*2; k1+=2)
+		{	bNumberU [k1] = new JButton (iArrayT);}
+		for (int k2 = 1; k2 < anzUnitFiles*2; k2+=2)
+		{	bNumberU [k2] = new JButton (iArrayB);}
+		lcredits 	= new JLabel (credits + " Credits");	lcredits.setFont (FP);
+		lcredits.setForeground (CBlue);
+		bStart 		= new JButton ("");						bStart.setFont (F);
+		bStart.setForeground (C);
+		bExit 		= new JButton ("Beenden");				bExit.setFont (F);
+		bExit.setForeground (CExit);
+		msg 		= new Message ();
+		
+	//******Koordinaten der Objekte******\\
+		int y = 165;
+		int x = 20;
+		for (int l1 = 0; l1 < ((int)anzUnitFiles/2); l1++)
+		{
+			lU [l1].setBounds (x, y, 150, 20);
+			lPicU [l1].setBounds ((x+145), (y-3), 30, 30);
+			lNumberU [l1].setBounds ((x+180), y, 20, 20);
+			bNumberU [l1*2].setBounds ((x+200), (y-4), 18, 12);
+			bNumberU [l1*2+1].setBounds ((x+200), (y+12), 18, 12);
+			y += 40;
+		}
+		
+		y = 165;
+		x = 315;
+		for (int l2 = ((int)anzUnitFiles/2); l2 < anzUnitFiles; l2++)
+		{
+			lU [l2].setBounds (x, y, 150, 20);
+			lPicU [l2].setBounds ((x+145), (y-3), 30, 30);
+			lNumberU [l2].setBounds ((x+180), y, 20, 20);
+			bNumberU [l2*2].setBounds ((x+200), (y-4), 18, 12);
+			bNumberU [l2*2+1].setBounds ((x+200), (y+12), 18, 12);
+			y += 40;
+		}
+		lHeading.setBounds (125, 20, 340, 65);
+		lcredits.setBounds (20, 125, 150, 20);
+		bStart.setBounds (85, 335, 155, 25);			bExit.setBounds (350, 335, 155, 25);
+		
+		
+	//******---------******\\
+		for (int m = 0; m < anzUnitFiles*2; m++)
+		{	bNumberU [m].setFocusable (false);}
+		bStart.setFocusable (false);						bExit.setFocusable (false);
+		this.setSize (new Dimension (600, 450));			this.setTitle ("Linas Vorbereitungen");
+		contentPane = (JPanel) this.getContentPane ();				contentPane.setLayout (null);
+		contentPane.setBackground (new Color (213, 222, 242));		contentPane.setCursor (curDef);
+		
+	//******Hinzufügen der Objekte******\\
+		for (int n = 0; n < anzUnitFiles; n++)
+		{
+			contentPane.add (lU [n]);
+			contentPane.add (lNumberU [n]);
+			contentPane.add (bNumberU [n*2]);
+			contentPane.add (bNumberU [n*2+1]);
+			contentPane.add (lPicU [n]);
+		}
+		contentPane.add (lHeading);					contentPane.add (lcredits);
+		contentPane.add (bStart);					contentPane.add (bExit);
+		
+		bStart.addActionListener (this);
+		bExit.addActionListener (this);
+		for (int o = 0; o < anzUnitFiles*2; o++)
+		{	bNumberU [o].addActionListener (this);}
+						
+	//******Spezifische Anfangseinstellungen******\\
+		if (!IsServer)	bStart.setLabel ("Bestätigen");
+		if (IsServer)	
+		{
+			bStart.setLabel ("Warte auf Client");
+			bStart.setEnabled (false);
+		}
+		
+		for (int p = 0; p < anzUnitFiles; p++)
+		{
+			lPicU [p].addMouseListener (MA [p] = new MouseAdapter ()
+			{
+				public void mouseEntered (MouseEvent e1)
+				{	contentPane.setCursor (curHan);}
+				public void mouseExited (MouseEvent e2)
+				{	contentPane.setCursor (curDef);}
+				public void mousePressed (MouseEvent e3)
+				{
+					int tmp = 0;
+					for (int q = 0; q < anzUnitFiles; q++)
+					{	if (lPicU [q] == e3.getSource ())		tmp = q;}
+					
+					if (lD != null)		
+					{
+						lD.setVisible (true);
+						lD.setUC (tmp);
+					}
+					else			
+					{
+						lD = new Description (BspU, tmp);
+						lD.setLocation (5, 5);
+						lD.setVisible (true);
+					}
+				}
+			});
+		}
+	}
+	
+/*********** - Programmende, wenn das Fenster geschlossen wird - ***********/	
+	
+	protected void processWindowEvent (WindowEvent e)
+	{
+		super.processWindowEvent (e);
+		if (e.getID () == WindowEvent.WINDOW_CLOSING)
+		{	System.exit (0);}							
+	}
+	
+/*********** - Programmende (Schließen Button) - ***********/	
+	
+	public void EndGame ()
+	{
+		send ("quit");
+		System.exit (0);
+	}
+
+/*********** - Reaktion auf Buttonklicks - ***********/		
+	
+	public void actionPerformed (ActionEvent e)
+	{
+		try
+		{
+			Object o = e.getSource ();
+			if (o.equals (bStart))					begin ();
+			if (o.equals (bExit))
+			{	
+				int answer = msg.msgConfirm ("Do you want to quit the game?", this);
+				if (answer == 0)	{EndGame ();}
+			}
+			
+			for (int p = 0; p < anzUnitFiles; p++)
+			{
+				if (o.equals (bNumberU [p*2]))		NumMod (p, "P");
+				if (o.equals (bNumberU [p*2+1]))	NumMod (p, "M");
+			}
+		}
+		catch (NullPointerException npe)
+		{	System.out.println ("Null Pointer");}
+	}
+	
+	public void begin ()
+	{
+		for (int i = 0; i < anzUnitFiles; i++)
+		{	UnitNum += Num [i];}
+		if (UnitNum == 0)
+		{	msg.msgError ("Sie müssen Einheiten für den Kampf auswählen!", this);}
+		else
+		{
+			if (!IsServer)	beginC ();
+			if (IsServer)	beginS ();
+		}
+	}
+	
+/*********** - "Kaufen" der Einheiten - ***********/		
+	
+	public void NumMod (int p, String PorM)
+	{
+		if ((PorM.equals ("P")) && (credits >= BspU [p].price))		{Num [p]++; credits -= BspU [p].price;}
+		if ((PorM.equals ("M")) && (Num [p] > 0))					{Num [p]--; credits += BspU [p].price;}
+
+		lNumberU [p].setText ("" + Num [p]);
+		lcredits.setText (credits + " Credits");
+	}				
+				
+/*********** - Wenn der Client mit seinen Einstellungen fertig ist - ***********/	
+	
+	public void beginC ()
+	{
+		createArray (0);									// Einheiten-Feld erstellen
+		send ("ClientReady");
+		
+		for (int j = 0; j < bNumberU.length; j++)
+		{	bNumberU [j].setEnabled (false);}
+		
+		bStart.setEnabled (false);
+		bStart.setLabel ("Warte auf Host");
+	}
+
+/*********** - Bescheid, dass Client fertig ist - ***********/		
+		
+	public void ClientReady (Unit [] UA)
+	{
+		tmpUA = UA;											// Einheiten-Feld vom Client
+		bStart.setLabel ("Spiel beginnen");
+		bStart.setEnabled (true);
+	}
+	
+/*********** - Wenn der Server mit seinen Einstellungen fertig ist - ***********/	
+	
+	public void beginS ()
+	{
+		int l = tmpUA.length;							// Länge des Feldes des Clients
+		createArray (l);								// Feld des Servers erstellen
+		addArray ();									// beide Felder zu einem verpacken
+		send ("ServerReady");							// fertiges Feld und Bescheid zum Client senden
+	}
+	
+/*********** - Feld mit den jeweiligen Einheiten erstellen - ***********/	
+	
+	public void createArray (int l)
+	{	
+		UnitArray = new Unit [(l + UnitNum)];
+		for (int a = 0; a < anzUnitFiles; a++)
+		{
+			for (int i = l; i < (l + Num [a]); i++)
+			{
+				UnitArray [i] = (Unit) BspU [a].clone();
+				UnitArray [i].IsServer = IsServer;
+				UnitArray [i].player = nick;
+			}
+			l += Num [a];
+		}
+	}	
+	
+/*********** - Feld mit den jeweiligen Einheiten erstellen - ***********/
+	
+	public void addArray ()
+	{
+		for (int i = 0; i < tmpUA.length; i++)
+		{	UnitArray [i] = tmpUA [i];}
+	}
+	
+/*********** - Einheiten-Feld ersetzen (erneuern) - ***********/	
+
+	public void setUnitArray (Unit [] UA)
+	{
+		UnitArray = UA;
+	}
+	
+/*********** - gibt das Beispielfeld zurueck - ***********/	
+
+	public Unit[] getBspU ()
+	{
+		return BspU;
+	}
+	
+/*********** - Senden des Befehles und des Feldes - ***********/	
+	
+	public void send (String Command)
+	{
+		forSending [0] = (Object) Command;
+		forSending [1] = (Object) UnitArray;
+		try
+		{	
+			Out.reset ();								// damit vorhandene Daten im OutputStream erst gelöscht und nicht mitgesendet werden
+			Out.writeObject ((Object) forSending);		// in OutputStream schreiben
+			Out.flush ();								// alles im OutputStram verschicken
+		}
+		catch (IOException e2)		{System.out.println (e2);}
+	}
+	
+/*********** - Ausgabestrom schließen - ***********/
+	
+	public void closeStream ()
+	{
+		try	{Out.close ();}
+		catch (IOException e3)		{System.out.println (e3);}
+	}
+}

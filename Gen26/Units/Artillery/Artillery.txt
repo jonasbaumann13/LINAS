@@ -1,0 +1,25 @@
+Unit: 					<Artillery>
+Cost:					<80>
+Hitpoints: 				<70>				@ <65>	@ <50>	@ <30>	@ <15>
+Armour type 1:			<MG>		
+Armour type 2:			<AT>		
+Armour type 3:			<Mortar>	
+Armour 1:				<0.75>				@ <>	@ <>	@ <>	@ <>
+Armour 2:				<1.00>				@ <>	@ <>	@ <>	@ <>
+Armour 3:				<1.00>				@ <>	@ <>	@ <>	@ <>
+Maximum damage:			<125>				@ <>	@ <>	@ <>	@ <>
+Damage type:			<Mortar>			@ <>	@ <>	@ <>	@ <>
+Factor for area damage:	<0.5>				@ <>	@ <>	@ <>	@ <>
+Minimum range:			<3>					@ <>	@ <>	@ <>	@ <>
+Maximum range:			<10>				@ <>	@ <>	@ <>	@ <>
+Radius of area damage:	<1>					@ <>	@ <>	@ <>	@ <>
+Distance modification:	<0,0,4,3,2,1,2,3,4,5>	@ <0,0,4,3,2,2,2,3,4,5>	@ <0,0,4,3,3,2,3,3,4,5>	@ <0,0,4,4,3,3,3,4,4,5>	@ <0,0,5,4,4,3,4,4,5,5>			// [1,2,3,4,5,6,7,...maxRW]; 1=beste, 5=schlechteste, 0=gar nicht
+Sight range:			<4>					@ <>	@ <>	@ <>	@ <>
+Camouflage:				<0>					@ <>	@ <>	@ <>	@ <>
+Points per round:		<10>				@ <>	@ <>	@ <>	@ <>
+Points per move:		<3>					@ <4>	@ <5>	@ <5>	@ <6>
+Points per attack:		<6>					@ <>	@ <>	@ <>	@ <>
+Obstacle after death?:	<true>
+Path for server pics:	<Artillery\ArtilleriePlayer2.gif>	@ <>	@ <>	@ <>	@ <>
+Path for client pics:	<Artillery\ArtilleriePlayer1.gif>	@ <>	@ <>	@ <>	@ <>
+Description:			<The Artillery with its long range and devasting damage is a very powerful unit. For its area effecting damage the artillery is useful against assemblies of enemie troups and soldiers. Nevertheless it has a weak armour and is, if alone, an easy target for scouts or undetected soldiers. Therefore the artillery is mostly used for fire support.>

@@ -18,7 +18,13 @@ class Message
    
 	public String msgInput(String meldung, JFrame parentFrame) throws IOException
 	{
-		String name = JOptionPane.showInputDialog(parentFrame, meldung, "Eingabe", JOptionPane.QUESTION_MESSAGE);
-		return name;
+		String input = JOptionPane.showInputDialog(parentFrame, meldung, "Eingabe", JOptionPane.QUESTION_MESSAGE);
+		return input;
 	}// msgInput
+	
+	public int msgConfirm(String meldung, JFrame parentFrame) throws HeadlessException
+	{
+		int answer = JOptionPane.showConfirmDialog(parentFrame, meldung, "Bestätigung", JOptionPane.YES_NO_OPTION);
+		return answer;
+	}
 }

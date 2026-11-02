@@ -1,0 +1,25 @@
+Unit: 					<Scout>
+Cost:					<30>
+Hitpoints: 				<50>			@ <45>	@ <35>	@ <25>	@ <15>
+Armour type 1:			<MG>		
+Armour type 2:			<AT>		
+Armour type 3:			<Mortar>	
+Armour 1:				<0.75>			@ <>	@ <>	@ <>	@ <>
+Armour 2:				<0.75>			@ <>	@ <>	@ <>	@ <>
+Armour 3:				<1.00>			@ <>	@ <>	@ <>	@ <>
+Maximum damage:			<20>			@ <>	@ <>	@ <>	@ <>
+Damage type:			<MG>			@ <>	@ <>	@ <>	@ <>
+Factor for area damage:	<-1>			@ <>	@ <>	@ <>	@ <>
+Minimum range:			<1>				@ <>	@ <>	@ <>	@ <>
+Maximum range:			<3>				@ <>	@ <>	@ <>	@ <>
+Radius of area damage:	<0>				@ <>	@ <>	@ <>	@ <>
+Distance modification:	<1,3,5>			@ <>	@ <>	@ <>	@ <>			// [1,2,3,4,5,6,7,...maxRW]; 1=beste, 3=schlechteste, 0=gar nicht
+Sight range:			<6>				@ <>	@ <>	@ <>	@ <>
+Camouflage:				<0>				@ <>	@ <>	@ <>	@ <>
+Points per round:		<16>			@ <14>	@ <12>	@ <12>	@ <10>
+Points per move:		<2>				@ <>	@ <>	@ <>	@ <>
+Points per attack:		<2>				@ <>	@ <3>	@ <4>	@ <4>
+Obstacle after death?:	<true>
+Path for server pics:	<Jeep\AufklaererPlayer2.gif>	@ <>	@ <>	@ <>	@ <>
+Path for client pics:	<Jeep\AufklaererPlayer1.gif>	@ <>	@ <>	@ <>	@ <>
+Description:			<The Scout is a small and swift jeep with a heavy machine gun on its back. This makes it very efficiant against enemy soldiers or even, if it gets close enough, against enemy artillery.>

@@ -1,0 +1,251 @@
+import java.io.*;
+import java.awt.*;
+import java.util.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.net.* ;
+
+/* Durch diesen Thread kommunizieren Client und Server. Es wird stets ein Objektfeld übergeben,
+ * welches aus 2 Objekten besteht. Das erste ist ein Befehl, um den nächsten Schritt zu bestimmen.
+ * Das zweite ist das Feld, in welchem die aktuellen Daten der einzelnen Einheiten stehen.
+ * Der Thread ist weiterhin für den Aufbau der Frames verantwortlich.
+ */
+
+public class linasComunication extends Thread
+{
+	String who = "";
+	String Command;							// ankommende Befehl
+	Object [] o;
+	Object [] forSending = new Object [2];
+	ObjectInputStream In = null;					// Eingabestrom
+	ObjectOutputStream Out = null;					// Ausgabestrom
+	FileInputStream FIS = null;
+	FileOutputStream FOS = null;
+	
+	int [] DataArr = null;
+	int picCount1 = 0;
+	int picCount2 = 0;
+	int anzUnitFiles;
+	int xy [] = new int [3];					// nur für Koordinaten eines Schusses nötig
+	int whichFrame = 0;						// um den Aufbau der Frames zu steuern
+	int [] UnCo = new int [1];
+	int x, y;
+	Unit [] basicUnitInfo;
+	Unit [] UnitArray;						// Feld mit Einheiten
+	linasPrepareFrame PFrame;					// \
+	linasSetFrame SFrame;						//  - die drei Frames
+	linasMainFrame MFrame;						// /
+	Message msg;							// Klasse für Fehlermeldungen
+	
+/*********** - Constructor - ***********/	
+		
+	public linasComunication (ObjectOutputStream Out, ObjectInputStream In, String who, int anzUnitFiles, Unit [] basicUnitInfo, int x, int y)
+	{
+		this.Out = Out;
+		this.In = In;
+		this.who = who;
+		this.anzUnitFiles = anzUnitFiles;
+		this.basicUnitInfo = basicUnitInfo;
+		this.x = x;
+		this.y = y;
+		msg = new Message ();
+		
+		System.out.println(who);
+		if (who.equals ("server"))	send ("sendUnitData");
+	}
+		
+/*********** - Prozess für Kommunikation - ***********/	
+	
+	public void run ()
+	{
+		try
+		{
+			while (true)
+			{
+				while ((o = (Object []) In.readObject ()) != null)		// solange ein Objekt ankommt
+				{
+					Command = o[0].toString();
+					System.out.println ("Incomming message: " + Command);
+					
+					if (
+						(Command.equals ("sendUnitData")) 	|| 	(Command.equals ("gotUnitData")) ||
+					 	(Command.equals ("sendUnitPics"))	|| 	(Command.equals ("noMorePics"))  ||
+					 	(Command.equals ("Flame"))		|| 	(Command.equals ("EnemyFire"))	
+					   )
+					{
+						if (Command.equals ("sendUnitData"))	// nur Client
+						{	
+							basicUnitInfo = (Unit []) o [1];
+							send ("gotUnitData");
+						}
+					
+						if (Command.equals ("gotUnitData"))	// nur Server
+						{
+							DataArr = null;
+							if (picCount2 < 5)		// Anzahl der Schadensmodelle
+							{
+								FIS = new FileInputStream (("tmp/" + basicUnitInfo[picCount1].pictureA[picCount2]));
+								DataArr = new int [FIS.available()];
+								for (int i0 = 0; i0 < DataArr.length; i0++)
+								{	DataArr [i0] = FIS.read ();}
+								FIS.close ();
+								FIS = null;
+								picCount2++;
+							}
+							else	
+							{
+								DataArr = new int [0];
+								picCount1++;
+								picCount2 = 0;
+							}
+							System.out.println ("["+picCount1+"]["+picCount2+"]");
+							if (picCount1 < anzUnitFiles*2)		send ("sendUnitPics");
+							else
+							{
+								send ("noMorePics");
+								nextFrame ();
+							}
+						}
+						
+						if (Command.equals ("sendUnitPics"))	// nur Client
+						{		
+							DataArr = (int []) o[1];
+							if (DataArr.length > 0)
+							{	
+								FOS = new FileOutputStream (("tmp/" + basicUnitInfo[picCount1].pictureA[picCount2]), true);
+								for (int i = 0; i < DataArr.length; i++)
+								{	FOS.write (DataArr [i]);}
+								picCount2++;
+								FOS.close ();
+								FOS = null;
+							}
+							else
+							{	
+								picCount1++;
+								picCount2 = 0;
+							}
+							System.out.println ("["+picCount1+"]["+picCount2+"]");
+							send ("gotUnitData");
+						}
+						
+						if (Command.equals ("noMorePics"))
+						{
+							nextFrame ();
+						}
+							
+					
+						if (Command.equals ("Flame"))		// Wenn ein Schuss vermerkt wurde, ist das
+						{					// zweite Objekt ein int-Feld!
+							xy = (int []) o[1];
+							MFrame.flame (xy [0], xy [1]);	// der wartende Spieler will die Flamme ja
+						}					// auch sehen!
+						if (Command.equals ("EnemyFire"))
+						{
+							UnCo = (int []) o[1];
+							MFrame.newEnemyInfo (UnCo [0]);
+						}
+					}
+					else	UnitArray = (Unit []) o[1];
+									
+					if (Command.equals ("ClientReady"))	PFrame.ClientReady (UnitArray);		// Client ist mit Wählen der Einheiten fertig
+					if (Command.equals ("ServerReady"))						// Server nun auch
+					{	
+						PFrame.setUnitArray (UnitArray);					// PrepareFrame bekommt das Feld des Servers, da es ihm gleich geschickt werden soll
+						PFrame.send ("NextFrame");						// Server soll nächstes Frame aufbauen (bekommt auch vollständiges Einheitenfeld)
+						nextFrame ();								// Client baut nächstes Frame auf
+					}
+					
+					if (Command.equals ("ClientSet"))	SFrame.ClientReady (UnitArray);		// Server bekommt beschei, dass Client seine Einheiten gesetzt hat
+					if (Command.equals ("ServerSet"))						// Client bekommt beschei, dass Server seine Einheiten gesetzt hat
+					{
+						SFrame.setUnitArray (UnitArray);		// wieder, um Server das nun erneuerte Feld zu geben
+						SFrame.send ("NextFrame");			// nächstes Frame soll aufgebaut werden (bei Server)
+						nextFrame ();					// Client baut nächstes Frame auf
+					}
+					if (Command.equals ("Move"))		MFrame.refresh (UnitArray);		// nach einem Zug die neuen Positionen für den, der nicht am Zug ist
+					if (Command.equals ("EndTurn"))		MFrame.startTurn (UnitArray);		// Zug wurde beendet, der andere ist dran
+					if (Command.equals ("NextFrame"))	nextFrame ();				// das nächste Frame wird aufgebaut
+					if (Command.equals ("won"))		MFrame.sieg (false);			// Es wird mitgeteilt, das der andere gesiegt hat, man selbst hat verloren
+					if (Command.equals ("runAway"))							// Falls ein Spieler vor der Entscheidung das Spiel verlässt	
+					{
+						MFrame.send ("quit");					// Spiel des Spielers, der es beenden wollte wird beendet
+						System.out.println ("Ihr Gegner ist geflohen!");	// Trost für den, der nun allein dasitzt
+						msg.msgInform ("Ihr Gegner ist geflohen!", MFrame);
+						Command = "quit";					// Hier wird das Spiel dann auch beendet
+						sleep (200);						
+					}
+					if (Command.equals ("quit"))					// Beenden des Spieles
+					{
+						MFrame.send ("quit");
+						sleep (200);
+						PFrame.closeStream ();
+						In.close ();
+						MFrame.setVisible (false);
+						System.exit (0);
+					}						
+					sleep (100);
+				}
+				sleep (100);
+			}
+		}
+		catch (IOException e1)			{System.out.println (e1);}
+		catch (ClassNotFoundException e2)	{System.out.println (e2);}
+		catch (Exception e3)			{System.out.println (e3);}
+	}
+	
+/*********** - Aufbau des jeweils nächsten Frames - ***********/		
+
+	public void nextFrame ()
+	{
+		
+		whichFrame++;
+		switch (whichFrame)
+			{
+				case 1:		PFrame = new linasPrepareFrame (Out, who, basicUnitInfo, anzUnitFiles);					
+						PFrame.setLocation (x, y);
+						PFrame.setResizable (false);
+						PFrame.setVisible (true);	
+						break;
+													// Da der OutputStream in linasPrepareFrame
+				case 2: 	Out = PFrame.getOOS ();					// geöffnet wurde, muss er hier abgeholt werden
+						x = PFrame.getBounds ().x;
+						y = PFrame.getBounds ().y;
+						SFrame = new linasSetFrame (who, Out, UnitArray);	// damit er an die anderen Frames übergeben werden kann			
+						SFrame.setLocation (x, y);
+						SFrame.setResizable (false);
+						SFrame.setVisible (true);
+						PFrame.setVisible (false);
+						break;
+
+				case 3: 	x = SFrame.getBounds ().x;
+						y = SFrame.getBounds ().y;
+						SFrame.setVisible (false);
+						MFrame = new linasMainFrame (who, Out, UnitArray);					
+						MFrame.setLocation (x, y);
+						MFrame.setResizable (false);
+						MFrame.setVisible (true);
+						break;
+			}
+	}
+	
+/*********** - Versenden der Server-Einheiten - ***********/
+	
+	public void send (String cmd)
+	{
+		try
+		{
+			forSending [0] = cmd;
+			forSending [1] = basicUnitInfo;
+			
+			if (cmd.equals ("gotUnitData"))		forSending [1] = null;
+			if (cmd.equals ("noMorePics"))		forSending [1] = null;
+			if (cmd.equals ("sendUnitPics"))	forSending [1] = DataArr;
+ 
+			Out.reset ();					// damit vorhandene Daten im OutputStream erst gelöscht und nicht mitgesendet werden
+			Out.writeObject (forSending);			// in OutputStream schreiben
+			Out.flush ();					// alles im OutputStram verschicken
+			System.out.println ("send: " + forSending [0]);	
+		}
+		catch (IOException e4)		{System.out.println (e4);}
+	}
+}

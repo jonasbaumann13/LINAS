@@ -1,0 +1,25 @@
+Unit: 					<Tank>
+Cost:					<60>
+Hitpoints: 				<125>		@ <110>	@ <85>	@ <60>	@ <30>
+Armour type 1:			<MG>		
+Armour type 2:			<AT>		
+Armour type 3:			<Mortar>		
+Armour 1:				<0.25>		@ <>	@ <>	@ <>	@ <>
+Armour 2:				<1.5>		@ <>	@ <>	@ <>	@ <>
+Armour 3:				<0.5>		@ <>	@ <>	@ <>	@ <>
+Maximum damage:			<100>		@ <>	@ <>	@ <>	@ <>
+Damage type:			<AT>		@ <>	@ <>	@ <>	@ <>
+Factor for area damage:	<-1>		@ <>	@ <>	@ <>	@ <>
+Minimum range:			<1>			@ <>	@ <>	@ <>	@ <>
+Maximum range:			<4>			@ <>	@ <>	@ <>	@ <>
+Radius of area damage:	<0>			@ <>	@ <>	@ <>	@ <>
+Distance modification:	<1,2,3,4>	@ <>	@ <>	@ <>	@ <>			// [1,2,3,4,5,6,7,...maxRW]; 1=best, 5=worst, 0=NA
+Sight range:			<5>			@ <>	@ <>	@ <>	@ <>
+Camouflage:				<0>			@ <>	@ <>	@ <>	@ <>
+Points per round:		<10>		@ <>	@ <>	@ <>	@ <>
+Points per move:		<2>			@ <3>	@ <3>	@ <4>	@ <5>
+Points per attack:		<4>			@ <>	@ <5>	@ <6>	@ <10>
+Obstacle after death?:	<true>
+Path for server pics:	<Tank\PanzerPlayer2.gif>	@ <>	@ <>	@ <>	@ <>
+Path for client pics:	<Tank\PanzerPlayer1.gif>	@ <>	@ <>	@ <>	@ <>
+Description:			<>

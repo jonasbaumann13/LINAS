@@ -1,0 +1,25 @@
+Unit: 					<Team>
+Cost:					<40>
+Hitpoints: 				<40>			@ <30>	@ <20>	@ <10>	@ <0>
+Armour type 1:			<MG>		
+Armour type 2:			<AT>		
+Armour type 3:			<Mortar>	
+Armour 1:				<1.50>			@ <>	@ <>	@ <>	@ <>
+Armour 2:				<0.50>			@ <>	@ <>	@ <>	@ <>
+Armour 3:				<1.00>			@ <>	@ <>	@ <>	@ <>
+Maximum damage:			<75>			@ <>	@ <>	@ <>	@ <>
+Damage type:			<Mortar>		@ <>	@ <>	@ <>	@ <>
+Factor for area damage:	<0.33>			@ <>	@ <>	@ <>	@ <>
+Minimum range:			<2>				@ <>	@ <>	@ <>	@ <>
+Maximum range:			<5>				@ <>	@ <>	@ <>	@ <>
+Radius of area damage:	<1>				@ <>	@ <>	@ <>	@ <>
+Distance modification:	<0,3,1,3,5>		@ <>	@ <>	@ <>	@ <>			// [1,2,3,4,5,6,7,...maxRW]; 1=best, 5=worst, 0=NA
+Sight range:			<6>				@ <>	@ <>	@ <>	@ <>
+Camouflage:				<3>				@ <>	@ <>	@ <>	@ <>
+Points per round:		<9>				@ <>	@ <11>	@ <10>	@ <10>
+Points per move:		<3>				@ <>	@ <>	@ <>	@ <>
+Points per attack:		<3>				@ <>	@ <4>	@ <4>	@ <7>
+Obstacle after death?:	<false>
+Path for server pics:	<Soldier\Soldier(4)Player2.gif>	@ <>	@ <Soldier\Soldier(3)Player2.gif>	@ <Soldier\Soldier(2)Player2.gif>	@ <Soldier\Soldier(1)Player2.gif>
+Path for client pics:	<Soldier\Soldier(4)Player1.gif>	@ <>	@ <Soldier\Soldier(3)Player1.gif>	@ <Soldier\Soldier(2)Player1.gif>	@ <Soldier\Soldier(1)Player1.gif>
+Description:			<>

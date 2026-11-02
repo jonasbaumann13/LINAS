@@ -1,0 +1,64 @@
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import java.io.*;
+import java.util.*;
+
+
+public class linasString
+{
+	public String [] s;
+
+	public linasString (String [] s)
+	{
+		this.s = s;			// Ob Einheit von jeweiligem Spieler gesehen werden kann
+	}
+	
+	public int getL ()
+	{
+		return s.length;
+	}
+	
+	public String getS (int i)
+	{
+		return s [i];
+	}
+	
+	public void setS (int i, String a)
+	{
+		s [i] = a;
+	}
+	
+	public int getMaxL ()
+	{
+		int l = 0;
+		for (int i = 0; i < s.length; i++)
+		{
+			if (s[i].length() > l)		l = s[i].length();
+		}
+		return l;
+	}
+	
+	public String getMaxS ()
+	{
+		String newS = "";
+		for (int i = 0; i < s.length; i++)
+		{
+			if (s[i].length() > newS.length())		newS = s[i];
+		}
+		return newS;
+	}
+	
+	public String [] getAll ()
+	{
+		return s;
+	}
+	
+	public String [] last ()
+	{
+		String [] newS = new String [s.length-1];
+		for (int n = 1; n < s.length; n++)
+		{	newS [n-1] = s [n];}
+		return newS;
+	}		
+}

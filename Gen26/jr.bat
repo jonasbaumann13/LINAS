@@ -1,0 +1,1 @@
+C:\Programme\Java\jdk1.5.0\bin\java %1
