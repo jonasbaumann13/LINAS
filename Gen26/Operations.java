@@ -1,8 +1,5 @@
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
 import java.io.*;
-import java.util.*;
+import java.util.Stack;
 
 /* Methodensammlung
  */
@@ -10,9 +7,9 @@ import java.util.*;
 public class Operations
 {
 /*********** - Umdrehen eines Stack - ***********/	
-	public Stack reverse (Stack tmp)
+	public <T> Stack<T> reverse (Stack<T> tmp)
 	{
-		Stack tmp2 = new Stack();
+		Stack<T> tmp2 = new Stack<>();
 		while (!tmp.empty())
 		{tmp2.push (tmp.pop());}
 		return tmp2;
@@ -23,8 +20,6 @@ public class Operations
 	{
 		boolean even = true;
 
-		if ((tmp % 2) == 0)
-		{	even = true;}
 		if ((tmp % 2) == 1)
 		{	even = false;}
 
@@ -38,20 +33,20 @@ public class Operations
 		int X, Y;
 		boolean gerade;
 
-		X 			= (int) ((MX - 8) / 22);	// Umrechnung in Feldkoordinaten
+		X 			= (MX - 8) / 22;	// Umrechnung in Feldkoordinaten
 		gerade 		= even (X);
 		X 			= (X * 22);					// Eigentlich + 8, aber damit Bild richtig ist, wieder - 8
 
-		if (gerade == false)					// Unterscheidung aufgrund des Hexafeldes nötig!
+		if (!gerade)					// Unterscheidung aufgrund des Hexafeldes nötig!
 		{	
-			Y 		= (int) ((MY - 7) / 28);
+			Y 		= (MY - 7) / 28;
 			XY [2] 	= Y;
 			Y 		= (Y * 28);					// s. o. ... + - 7
 		}
 
 		else
 		{	
-			Y 		= (int) ((MY - 21) / 28);
+			Y 		= (MY - 21) / 28;
 			XY [2] 	= Y;
 			Y 		= (Y * 28) + 14;			// s. o. ... + 21, - 7
 		}
@@ -308,7 +303,7 @@ public class Operations
 	public boolean PointVisibility (Unit [] UnitArray, int P1UnitNum, boolean IsServer, int x, int y, int camouflage)
 	{
 		int sightMod;
-		int distance = 0;
+		int distance;
 		boolean tmpVisible = false;
 		if (!IsServer)
 		{
@@ -349,16 +344,13 @@ public class Operations
 /*********** - gibt kleinere Zahl zurueck - ***********/	
 	public int lower (int a, int b)
 	{
-		int c = 0;
-		if (a <= b)	c = a;
-		else		c = b;
-		return c;
+		return Math.min(a, b);
 	}
 	
 /*********** - Name der beiden Spieler herausfinden - ***********/
 	public String [] player (Unit [] UnitArray)
 	{
-		String player [] 	= new String [2];
+		String [] player 	= new String [2];
 		player [0] 			= UnitArray [0].player;
 		player [1] 			= UnitArray [UnitArray.length - 1].player;
 		return player;
@@ -397,7 +389,7 @@ public class Operations
 	}
 	
 /*********** - Einheitenfeld aus Stack erstellen - ***********/
-	public Unit [] createBspUA (Stack SFile)
+	public Unit [] createBspUA (Stack<?> SFile)
 	{
 		Unit [] BspUA = new Unit [SFile.size()];
 		for (int i = 0; i < SFile.size(); i++)
@@ -428,7 +420,7 @@ public class Operations
 			{
 				for (int i2 = 0; i2 < values[i1].getL(); i2++)
 				{	
-					if (values[i1].getS(i2).equals (""))
+					if (values[i1].getS(i2).isEmpty())
 					{	values[i1].setS(i2, values[i1].getS(0));}
 				}
 			}
@@ -444,8 +436,8 @@ public class Operations
 			double [] admA			=	toDA (values[11]);
 			String [] damTypeA		=	values[10].getAll();
 			
-			String [] pictureAS		= 	null;
-			String [] pictureAC		= 	null;
+			String [] pictureAS;
+			String [] pictureAC;
 			pictureAS 				= 	values[22].getAll();
 			pictureAC				= 	values[23].getAll();
 			
@@ -453,9 +445,7 @@ public class Operations
 			String typeV 			= 	values[0].getS(0);
 			String [] ArmourType 	= 	{values[3].getS(0), values[4].getS(0), values[5].getS(0)};
 			String Description 		= 	values [24].getS(0);
-			boolean obstacleAD;
-			if (values [21].getS (0).equalsIgnoreCase ("true"))	obstacleAD = true;
-			else 												obstacleAD = false;
+			boolean obstacleAD = values[21].getS(0).equalsIgnoreCase("true");
 
 			UnitType = new Unit (price,Name,typeV,ArmourType,Description,obstacleAD,tpA,damA,sightA,camouflageA,zpA,rwA,rwTypeA,armourA,admA,damTypeA,pictureAS,pictureAC,IsServer);
             UnitType.GermanName = germanName;
@@ -603,15 +593,13 @@ public class Operations
 	
 	public double tD (String s)								
 	{
-		return Double.valueOf(s).doubleValue();
+		return Double.parseDouble(s);
 	}
 
 /*********** - String != ""? - ***********/	
 	public boolean notEmpty (String s)
 	{
-		boolean b = true;
-		if (s.equals (""))	b = false;
-		return b;
+		return !s.isEmpty();
 	}
 	
 /*********** - String bei @ zerlegen - ***********/		
@@ -636,12 +624,12 @@ public class Operations
 		if (!IsServer)
 		{
 			for (int i1 = 0; i1 < P1UnitNum; i1++)
-			{	if (UnitArray [i1].visible == false)	ready = false;}
+			{	if (!UnitArray [i1].visible)	ready = false;}
 		}
 		if (IsServer)
 		{
 			for (int i2 = P1UnitNum; i2 < UnitArray.length; i2++)
-			{	if (UnitArray [i2].visible == false)	ready = false;}
+			{	if (!UnitArray [i2].visible)	ready = false;}
 		}
 		return ready;
 	}
@@ -662,7 +650,6 @@ public class Operations
 /*********** - Double in Prozent - ***********/	
 	public int perCent (double a)
 	{
-		int pC = (int) (100 - 100*a);
-		return pC;
+		return (int) (100 - 100*a);
 	}
 }
