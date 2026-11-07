@@ -70,7 +70,7 @@ public class SetFrame extends JFrame implements ActionListener, MouseListener
 			lLeftU [j] 		= new JLabel (BspU [j].type + " (" + BspU [j].DamType + "):");
 			lLeftUV [j] 	= new JLabel ("--");
 		}
-		iHeading 	= new ImageIcon ("Pics/linasHeader.gif");		JLA [0].setIcon (iHeading);
+		iHeading 	= new ImageIcon (AppPaths.asset("Pics/linasHeader.gif"));		JLA [0].setIcon (iHeading);
 		JLA [1].setText ("Spieler:");
 		JLA [3].setText ("Einheit:");
 		JLA [5].setText ("Verfügbare Einheiten:");

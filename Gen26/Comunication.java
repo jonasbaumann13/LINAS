@@ -160,8 +160,8 @@ public class Comunication extends Thread
 							DataArr = null;
 							if (picCount2 < 5)							// Anzahl der Schadensmodelle
 							{
-								if (basicUnitInfo[picCount1].IsServer)	FIS = new FileInputStream (("tmp/" + basicUnitInfo[picCount1].pictureAS[picCount2]));
-								else																		FIS = new FileInputStream (("tmp/" + basicUnitInfo[picCount1].pictureAC[picCount2]));
+								if (basicUnitInfo[picCount1].IsServer)	FIS = new FileInputStream (AppPaths.temporary(basicUnitInfo[picCount1].pictureAS[picCount2]));
+								else																		FIS = new FileInputStream (AppPaths.temporary(basicUnitInfo[picCount1].pictureAC[picCount2]));
 								DataArr = new int [FIS.available()];
 								for (int i0 = 0; i0 < DataArr.length; i0++)
 								{	DataArr [i0] = FIS.read ();}
@@ -190,8 +190,8 @@ public class Comunication extends Thread
 							DataArr = (int []) o[1];
 							if (DataArr.length > 0)
 							{	
-								if (basicUnitInfo[picCount1].IsServer)	FOS = new FileOutputStream (("tmp/" + basicUnitInfo[picCount1].pictureAS[picCount2]), true);
-								else																		FOS = new FileOutputStream (("tmp/" + basicUnitInfo[picCount1].pictureAC[picCount2]), true);
+								if (basicUnitInfo[picCount1].IsServer)	FOS = new FileOutputStream (AppPaths.temporary(basicUnitInfo[picCount1].pictureAS[picCount2]), true);
+								else																		FOS = new FileOutputStream (AppPaths.temporary(basicUnitInfo[picCount1].pictureAC[picCount2]), true);
 								for (int i = 0; i < DataArr.length; i++)
 								{	FOS.write (DataArr [i]);}
 								picCount2++;

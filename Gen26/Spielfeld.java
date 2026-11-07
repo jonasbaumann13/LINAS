@@ -10,22 +10,22 @@ import java.util.*;
 
 public class Spielfeld extends JComponent
 {
-	Image hexa 			= getToolkit ().getImage ("Pics/Spielbrett.gif");
-	Image ESelected 	= getToolkit ().getImage ("Pics/Selected.gif");
-	Image Turn 			= getToolkit ().getImage ("Pics/Turn.gif");
-	Image MG 			= getToolkit ().getImage ("Pics/MG.gif");
-	Image AT 			= getToolkit ().getImage ("Pics/AT.gif");
-	Image Mortar 		= getToolkit ().getImage ("Pics/LR.gif");
+	Image hexa 			= getToolkit ().getImage (AppPaths.asset("Pics/Spielbrett.gif"));
+	Image ESelected 	= getToolkit ().getImage (AppPaths.asset("Pics/Selected.gif"));
+	Image Turn 			= getToolkit ().getImage (AppPaths.asset("Pics/Turn.gif"));
+	Image MG 			= getToolkit ().getImage (AppPaths.asset("Pics/MG.gif"));
+	Image AT 			= getToolkit ().getImage (AppPaths.asset("Pics/AT.gif"));
+	Image Mortar 		= getToolkit ().getImage (AppPaths.asset("Pics/LR.gif"));
 	//Schadensmodelle
-	Image perCent100 	= getToolkit ().getImage ("Pics/100perCent.gif");
-	Image perCent75 	= getToolkit ().getImage ("Pics/75perCent.gif");
-	Image perCent50 	= getToolkit ().getImage ("Pics/50perCent.gif");
-	Image perCent25 	= getToolkit ().getImage ("Pics/25perCent.gif");
-	Image perCent00 	= getToolkit ().getImage ("Pics/00perCent.gif");
-	Image destroyed 	= getToolkit ().getImage ("Pics/Schrott.gif");
+	Image perCent100 	= getToolkit ().getImage (AppPaths.asset("Pics/100perCent.gif"));
+	Image perCent75 	= getToolkit ().getImage (AppPaths.asset("Pics/75perCent.gif"));
+	Image perCent50 	= getToolkit ().getImage (AppPaths.asset("Pics/50perCent.gif"));
+	Image perCent25 	= getToolkit ().getImage (AppPaths.asset("Pics/25perCent.gif"));
+	Image perCent00 	= getToolkit ().getImage (AppPaths.asset("Pics/00perCent.gif"));
+	Image destroyed 	= getToolkit ().getImage (AppPaths.asset("Pics/Schrott.gif"));
 
-	Image Shadow 		= getToolkit ().getImage ("Pics/ShadowOfWar.gif");
-	Image Explosion 	= getToolkit ().getImage ("Pics/Explosion2.gif");
+	Image Shadow 		= getToolkit ().getImage (AppPaths.asset("Pics/ShadowOfWar.gif"));
+	Image Explosion 	= getToolkit ().getImage (AppPaths.asset("Pics/Explosion2.gif"));
 	Image [] IMG;
 	Color cBlue 		= new Color (41, 41, 255);
 	String [] ArmourType;
@@ -63,7 +63,7 @@ public class Spielfeld extends JComponent
 		try
 		{	
 			for (int i = 0; i < UA.length; i++)
-			{	IMG [i] = getToolkit ().getImage ("Units/" + UnitArray [i].Picture);}
+			{	IMG [i] = getToolkit ().getImage (AppPaths.asset("Units/" + UnitArray [i].Picture));}
 		}
 		catch (NullPointerException e1)		{System.out.println (e1);}
 	}

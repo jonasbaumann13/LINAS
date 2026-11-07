@@ -52,7 +52,7 @@ public class MainFrame extends JFrame implements ActionListener
 		this.IsServer	= IsServer;
 		this.Out 		= Out;
 
-		iHeading 		= new ImageIcon ("Pics/linasHeader.gif");	lHeading = new JLabel (iHeading);
+		iHeading 		= new ImageIcon (AppPaths.asset("Pics/linasHeader.gif"));	lHeading = new JLabel (iHeading);
 		lEInfo 			= new JLabel ("Markierter Gegner");
 		for (int l1 = 0; l1 < 10; l1++)
 		{

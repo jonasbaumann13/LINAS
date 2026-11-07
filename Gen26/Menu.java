@@ -48,7 +48,7 @@ public class Menu extends JFrame implements ActionListener
 		}
 		JBA [3].setForeground (CExit);
 
-		iHeading = new ImageIcon ("Pics/linasHeaderS.gif");
+		iHeading = new ImageIcon (AppPaths.asset("Pics/linasHeaderS.gif"));
 		JLHeading.setIcon (iHeading);
 		JBA [0].setLabel ("Create Game");					JBA [1].setLabel ("Join Game");
 		JBA [2].setLabel ("Keypad Configuration");			JBA [3].setLabel ("Exit");

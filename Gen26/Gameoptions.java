@@ -74,7 +74,7 @@ public class Gameoptions extends JFrame implements ActionListener
 		ContentPane.setBackground (new Color (213, 222, 242));		Msg 		= new Message ();
 		CBA[0]		= new JCheckBox ("Fog of war");
 		CBA[1]		= new JCheckBox ("Transfer own units");			CBA[2]		= new JCheckBox ("Transfer own pictures");
-		IHeading	= new ImageIcon ("Pics/linasHeaderS.gif");		LiMUnits	= new DefaultListModel ();
+		IHeading	= new ImageIcon (AppPaths.asset("Pics/linasHeaderS.gif"));		LiMUnits	= new DefaultListModel ();
 		BExit 		= new JButton ("Exit");							ContentPane.add (BExit);						
 		BStart 		= new JButton ("Accept");						ContentPane.add (BStart);
 		TFCredit	= new JTextField (10);							ContentPane.add (TFCredit);
@@ -230,7 +230,7 @@ public class Gameoptions extends JFrame implements ActionListener
 	{
 		if (FCUnits == null)
 		{
-			FCUnits = new JFileChooser (new File (System.getProperty ("user.dir")));
+			FCUnits = new JFileChooser (AppPaths.units ());
 			FCUnits.setFileSelectionMode (JFileChooser.FILES_AND_DIRECTORIES);
 			FCUnits.setFileFilter (new ExampleFileFilter ("txt", "Unit files or folders"));
 			FCUnits.setAcceptAllFileFilterUsed (false);

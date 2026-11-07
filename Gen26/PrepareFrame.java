@@ -78,8 +78,8 @@ public class PrepareFrame extends JFrame implements ActionListener
 			else			BspU [i0].Picture = BspU [i0].pictureAC[0];
 		}		
 		
-		iHeading 	= new ImageIcon ("Pics/linasHeaderS.gif");		lHeading 	= new JLabel (iHeading);
-		iArrayT 	= new ImageIcon ("Pics/ArrayTop.gif");			iArrayB 	= new ImageIcon ("Pics/ArrayBottom.gif");
+		iHeading 	= new ImageIcon (AppPaths.asset("Pics/linasHeaderS.gif"));		lHeading 	= new JLabel (iHeading);
+		iArrayT 	= new ImageIcon (AppPaths.asset("Pics/ArrayTop.gif"));			iArrayB 	= new ImageIcon (AppPaths.asset("Pics/ArrayBottom.gif"));
 		
 	//******graphische Instanzierung******\\
 		for (int j = 0; j < anzUnitFiles; j++)
@@ -91,7 +91,7 @@ public class PrepareFrame extends JFrame implements ActionListener
 			lNumberU [j].setFont (F);
 			lNumberU [j].setForeground (C);
 			lPicU [j] 		= new JLabel ();
-			iPicU [j] 		= new ImageIcon ("Units/" + BspU [j].Picture);		//hier!!!
+			iPicU [j] 		= new ImageIcon (AppPaths.asset("Units/" + BspU [j].Picture));		//hier!!!
 			lPicU [j].setIcon (iPicU [j]);
 			lPicU [j].setFocusable (false);
 			lPicU [j].setToolTipText ("Beschreibung...");

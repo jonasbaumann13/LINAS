@@ -8,8 +8,8 @@ import java.net.*;
 /* In dieser Klasse wird von den Spielern festgelegt, mit wie vielen von jeder Sorte an Einheiten
  * Sie gegen den anderen Spieler antreten wollen. Jeder hat eine bestimmte Anzahl an Punkten und muss
  * davon die unterschiedlich teuren Einheiten kaufen.
- * Auï¿½erdem wird dann das komplette Einheitenfeld erstellt, welches also die Einheiten beider Spieler
- * enthï¿½lt
+ * Außerdem wird dann das komplette Einheitenfeld erstellt, welches also die Einheiten beider Spieler
+ * enthält
  */
 
 public class Description extends JFrame implements ActionListener
@@ -33,7 +33,7 @@ public class Description extends JFrame implements ActionListener
 	//andere Komponenten
 	int UC;
 	Unit [] bspU;
-	Message msg;						// Klasse fï¿½r Fehlermeldungen
+	Message msg;						// Klasse für Fehlermeldungen
 	Operations op;						// Methodensammlung
 	
 	public Description (Unit [] bspU, int UC)
@@ -50,14 +50,14 @@ public class Description extends JFrame implements ActionListener
 									
 	//******graphische Instanzierung******\\
 		
-		iHeading 		= new ImageIcon ("Pics/linasHeaderS.gif");
-		iUnit 			= new ImageIcon ("Units/" + bspU [UC].Picture);
-		iNext 			= new ImageIcon ("Pics/ArrayNext.gif");
-		iLast 			= new ImageIcon ("Pics/ArrayLast.gif");
+		iHeading 		= new ImageIcon (AppPaths.asset("Pics/linasHeaderS.gif"));
+		iUnit 			= new ImageIcon (AppPaths.asset("Units/" + bspU [UC].Picture));
+		iNext 			= new ImageIcon (AppPaths.asset("Pics/ArrayNext.gif"));
+		iLast 			= new ImageIcon (AppPaths.asset("Pics/ArrayLast.gif"));
 		lHeading 		= new JLabel (iHeading);
 		bLast 			= new JButton (iLast);				bLast.setFocusable (false);
 		bNext 			= new JButton (iNext);				bNext.setFocusable (false);
-		bBack 			= new JButton ("zurï¿½ck");			bBack.setFocusable (false);
+		bBack 			= new JButton ("zurück");			bBack.setFocusable (false);
 		JLAInfo [16] 	= new JLabel ();
 		for (int i1 = 0; i1 < 16; i1++)
 		{
@@ -136,7 +136,7 @@ public class Description extends JFrame implements ActionListener
 		contentPane = (JPanel) this.getContentPane ();			contentPane.setLayout (null);
 		contentPane.setBackground (new Color (213, 222, 242));
 		
-	//******Hinzufï¿½gen der Objekte******\\
+	//******Hinzufügen der Objekte******\\
 		for (int l1 = 0; l1 < 17; l1++)
 		{
 			contentPane.add (JLAInfo [l1]);
@@ -174,7 +174,7 @@ public class Description extends JFrame implements ActionListener
 	
 	public void info ()
 	{
-		JLAInfo [16].setIcon (new ImageIcon ("Units/" + bspU [UC].Picture));
+		JLAInfo [16].setIcon (new ImageIcon (AppPaths.asset("Units/" + bspU [UC].Picture)));
 		JLAInfoV [0].setText (bspU [UC].price + "");
 		JLAInfoV [1].setText (bspU [UC].TP + "");
 		JLAInfoV [2].setText (op.perCent (bspU [UC].Armour [0]) + "%");
