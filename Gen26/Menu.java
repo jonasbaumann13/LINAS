@@ -50,9 +50,23 @@ public class Menu extends JFrame implements ActionListener
 
 		iHeading = new ImageIcon (AppPaths.asset("Pics/linasHeaderS.gif"));
 		JLHeading.setIcon (iHeading);
-		JBA [0].setLabel ("Create Game");					JBA [1].setLabel ("Join Game");
-		JBA [2].setLabel ("Keypad Configuration");			JBA [3].setLabel ("Exit");
+		JBA [0].setLabel (I18n.text("Create Game"));					JBA [1].setLabel (I18n.text("Join Game"));
+		JBA [2].setLabel (I18n.text("Keypad Configuration"));			JBA [3].setLabel (I18n.text("Exit"));
 		
+        JLabel languageLabel = new JLabel("Language / Sprache:");
+        languageLabel.setBounds(70, 105, 140, 25);
+        JComboBox<String> language = new JComboBox<>(new String[] {"English", "Deutsch"});
+        language.setBounds(210, 105, 115, 25);
+        language.setSelectedIndex(I18n.isGerman() ? 1 : 0);
+        language.addActionListener(event -> {
+            I18n.setGerman(language.getSelectedIndex() == 1);
+            JBA[0].setText(I18n.text("Create Game"));
+            JBA[1].setText(I18n.text("Join Game"));
+            JBA[2].setText(I18n.text("Keypad Configuration"));
+            JBA[3].setText(I18n.text("Exit"));
+        });
+        contentPane.add(languageLabel);
+        contentPane.add(language);
 		JLHeading.setBounds (25, 20, 340, 65);
 		JBA [0].setBounds (115, 150, 170, 25);
 		JBA [1].setBounds (115, 200, 170, 25);
@@ -91,7 +105,7 @@ public class Menu extends JFrame implements ActionListener
 	{
 		try
 		{
-			Nick 	= msg.msgInput ("Please enter your name.", this);
+			Nick 	= msg.msgInput (I18n.text("Please enter your name."), this);
 			this.setVisible (false);
 			Com 	= new Comunication (true, Nick, "", this.getBounds ().x, this.getBounds ().y);
 			Com.start ();
@@ -107,8 +121,8 @@ public class Menu extends JFrame implements ActionListener
 		
 		try
 		{
-			Nick 	= msg.msgInput ("Please enter your name.", this);
-			IP 		= msg.msgInput ("Please enter the server IP.", this);
+			Nick 	= msg.msgInput (I18n.text("Please enter your name."), this);
+			IP 		= msg.msgInput (I18n.text("Please enter the server IP."), this);
 		}
 		catch (Exception g)	 		{System.out.println (g);}
 				

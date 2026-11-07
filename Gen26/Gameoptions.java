@@ -72,18 +72,18 @@ public class Gameoptions extends JFrame implements ActionListener
 		this.setSize (new Dimension (570, 450));					this.setTitle ("Linas");
 		ContentPane = (JPanel) this.getContentPane ();				ContentPane.setLayout (null);
 		ContentPane.setBackground (new Color (213, 222, 242));		Msg 		= new Message ();
-		CBA[0]		= new JCheckBox ("Fog of war");
-		CBA[1]		= new JCheckBox ("Transfer own units");			CBA[2]		= new JCheckBox ("Transfer own pictures");
+		CBA[0]		= new JCheckBox (I18n.text("Fog of war"));
+		CBA[1]		= new JCheckBox (I18n.text("Transfer own units"));			CBA[2]		= new JCheckBox (I18n.text("Transfer own pictures"));
 		IHeading	= new ImageIcon (AppPaths.asset("Pics/linasHeaderS.gif"));		LiMUnits	= new DefaultListModel ();
-		BExit 		= new JButton ("Exit");							ContentPane.add (BExit);						
-		BStart 		= new JButton ("Accept");						ContentPane.add (BStart);
+		BExit 		= new JButton (I18n.text("Exit"));							ContentPane.add (BExit);
+		BStart 		= new JButton (I18n.text("Accept"));						ContentPane.add (BStart);
 		TFCredit	= new JTextField (10);							ContentPane.add (TFCredit);
 		TFChat		= new JTextField (100);							ContentPane.add (TFChat);
 		TAChat		= new JTextArea ();
 		LiUnits		= new JList (LiMUnits);
 		SPChat		= new JScrollPane (TAChat);						ContentPane.add (SPChat);
 		SPUnits		= new JScrollPane (LiUnits);					ContentPane.add (SPUnits);
-		BFileAdd	= new JButton ("Add");			if (IsServer)	ContentPane.add (BFileAdd);
+		BFileAdd	= new JButton (I18n.text("Add"));			if (IsServer)	ContentPane.add (BFileAdd);
 		BFileDel	= new JButton ("X");			if (IsServer)	ContentPane.add (BFileDel);
 		BFileInfo	= new JButton ("?");			if (IsServer)	ContentPane.add (BFileInfo);
 		
@@ -111,8 +111,8 @@ public class Gameoptions extends JFrame implements ActionListener
 			if ((IsServer)||(c==0))					ContentPane.add (CBA[c]);			
 		}
 		
-		LA[1].setText ("Credits available");
-		LA[2].setText ("Units for this game:");
+		LA[1].setText (I18n.text("Credits available"));
+		LA[2].setText (I18n.text("Units for this game:"));
 		LA[3].setForeground (CBlue);
 		LA[4].setForeground (CRed);
 		LA[4].setHorizontalAlignment (LA[4].RIGHT);
@@ -136,11 +136,11 @@ public class Gameoptions extends JFrame implements ActionListener
 		LA[0].setIcon (IHeading);
 		
 						LA[0].setBounds 	(125, 20, 340, 65);			
-		TFCredit.setBounds 	(10, 100, 50, 20);			LA[2].setBounds		(300, 100, 150, 20);
-		LA[1].setBounds 	(70, 100, 150, 25);			SPUnits.setBounds	(300, 130, 225, 85);
-		CBA[0].setBounds 	(10, 130, 160, 25);			BFileAdd.setBounds	(300, 225, 51, 20);
-		CBA[1].setBounds 	(10, 190, 160, 25);			BFileDel.setBounds	(355, 225, 51, 20);
-		CBA[2].setBounds 	(10, 220, 160, 25);			BFileInfo.setBounds (410, 225, 51, 20);
+		TFCredit.setBounds 	(10, 100, 50, 20);			LA[2].setBounds		(300, 100, 240, 20);
+		LA[1].setBounds 	(70, 100, 220, 25);			SPUnits.setBounds	(300, 130, 225, 85);
+		CBA[0].setBounds 	(10, 130, 270, 25);			BFileAdd.setBounds	(300, 225, 100, 20);
+		CBA[1].setBounds 	(10, 190, 270, 25);			BFileDel.setBounds	(405, 225, 51, 20);
+		CBA[2].setBounds 	(10, 220, 270, 25);			BFileInfo.setBounds (460, 225, 51, 20);
 		LA[3].setBounds		(12, 260, 160, 25);			TFChat.setBounds	(300, 335, 225, 20);
 		LA[4].setBounds		(98, 260, 160, 25);			BStart.setBounds	(300, 365, 90, 25);
 		SPChat.setBounds	(10, 290, 250, 100);		BExit.setBounds		(435, 365, 90, 25);									
@@ -172,7 +172,7 @@ public class Gameoptions extends JFrame implements ActionListener
 		if (IsServer)
 		{
 			BStart.setEnabled (false);
-			BStart.setLabel ("Waiting");
+			BStart.setLabel (I18n.text("Waiting"));
 			LA[3].setText (NickS);
 		}
 		else
@@ -232,13 +232,14 @@ public class Gameoptions extends JFrame implements ActionListener
 		{
 			FCUnits = new JFileChooser (AppPaths.units ());
 			FCUnits.setFileSelectionMode (JFileChooser.FILES_AND_DIRECTORIES);
-			FCUnits.setFileFilter (new ExampleFileFilter ("txt", "Unit files or folders"));
+			FCUnits.setFileFilter (new ExampleFileFilter ("txt", I18n.text("Unit files or folders")));
 			FCUnits.setAcceptAllFileFilterUsed (false);
 		}
 		if (FCUnits.showOpenDialog (BFileAdd) == JFileChooser.APPROVE_OPTION)
 		{
 			File selected = FCUnits.getSelectedFile ();
-			FCUnits.setCurrentDirectory (selected.isDirectory () ? selected : selected.getParentFile ());
+			File parent = selected.getAbsoluteFile ().getParentFile ();
+			if (parent != null) FCUnits.setCurrentDirectory (parent);
 			addUnitFiles (selected);
 		}
 	}
@@ -265,7 +266,7 @@ public class Gameoptions extends JFrame implements ActionListener
 				SFile.push (file);
 				LiMUnits.addElement (file.getName ());
 			}
-			catch (IOException e) { Msg.msgError ("Cannot read unit file: " + file, this); }
+			catch (IOException e) { Msg.msgError (I18n.text("Cannot read unit file: ") + file, this); }
 		}
 	}
 
@@ -331,7 +332,7 @@ public class Gameoptions extends JFrame implements ActionListener
 		else
 		{	
 			if ((TFCredit.getText().equals(""))||((int)Integer.valueOf(TFCredit.getText()).intValue()==0))
-			{	Msg.msgError ("Please enter a number for the available credits.", this);}
+			{	Msg.msgError (I18n.text("Please enter a number for the available credits."), this);}
 			else 
 			{
 				BasicUnitInfo = Op.createBspUA (SFile);
@@ -346,7 +347,7 @@ public class Gameoptions extends JFrame implements ActionListener
 	public void clientAccepts ()
 	{
 		BStart.setEnabled (true);
-		BStart.setLabel ("Start");
+		BStart.setLabel (I18n.text("Start"));
 	}
 		
 		
@@ -412,7 +413,7 @@ public class Gameoptions extends JFrame implements ActionListener
 	{
 		this.Out = Out;
 		TAChat.setForeground (CBlack);
-		TAChat.append ("\nConection created\n");
+		TAChat.append (I18n.text("\nConection created\n"));
 		if (IsServer)		send ("ServerNick", NickS);
 	}
 	

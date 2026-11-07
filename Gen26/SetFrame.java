@@ -67,15 +67,15 @@ public class SetFrame extends JFrame implements ActionListener, MouseListener
 		{	JLA [j0] 		= new JLabel ("");}
 		for (int j = 0; j < anzUnitFiles; j++)
 		{
-			lLeftU [j] 		= new JLabel (BspU [j].type + " (" + BspU [j].DamType + "):");
+			lLeftU [j] 		= new JLabel (BspU [j].getDisplayName() + " (" + BspU [j].DamType + "):");
 			lLeftUV [j] 	= new JLabel ("--");
 		}
 		iHeading 	= new ImageIcon (AppPaths.asset("Pics/linasHeader.gif"));		JLA [0].setIcon (iHeading);
-		JLA [1].setText ("Spieler:");
-		JLA [3].setText ("Einheit:");
-		JLA [5].setText ("Verfügbare Einheiten:");
-		bEndGame 	= new JButton ("Spiel beenden");
-		bNext 		= new JButton ("Weiter");						bReady 	= new JButton ("");
+		JLA [1].setText (I18n.text("Player:"));
+		JLA [3].setText (I18n.text("Unit:"));
+		JLA [5].setText (I18n.text("Available units:"));
+		bEndGame 	= new JButton (I18n.text("End game"));
+		bNext 		= new JButton (I18n.text("Next"));						bReady 	= new JButton ("");
 		Brett 		= new Spielfeld ();								msg 	= new Message ();
 		
 	//******Koordinaten der Objekte******\\
@@ -95,7 +95,7 @@ public class SetFrame extends JFrame implements ActionListener, MouseListener
 		
 	//******---------******\\
 		Brett.setSize (580, 580);						Brett.addMouseListener (this);
-		this.setTitle ("Linas Einheiten setzen");		this.setSize (new Dimension (900, 728));
+		this.setTitle (I18n.text("Linas deployment"));		this.setSize (new Dimension (900, 728));
 		contentPane = (JPanel) this.getContentPane ();	contentPane.setLayout (null);
 		contentPane.setBackground (new Color (213, 222, 242));
 		bNext.setFocusable (false);						bNext.setForeground (C);
@@ -145,18 +145,18 @@ public class SetFrame extends JFrame implements ActionListener, MouseListener
 		if (!IsServer)						// nur für Client
 		{	
 			UC = 0;
-			JLA [4].setText (UnitArray [UC].type + " (" + UnitArray [UC].DamType + ")");
+			JLA [4].setText (UnitArray [UC].getDisplayName() + " (" + UnitArray [UC].DamType + ")");
 			Brett.newBoard (1);							// spezifische erlaubte Felder, auf die er setzen kann
-			bReady.setLabel ("Fertig");
+			bReady.setLabel (I18n.text("Ready"));
 			JLA [2].setText (Player [0]);				// (seine Einheiten gehen im Feld von 0 bis P1UnitNum!)
 		}
 		if (IsServer)						// nur für Server
 		{	
 			UC 		= P1UnitNum;						// (seine Einheiten gehen im Feld von P1UnitNum bis zum Schluss!)
 			turn 	= false;							// nicht am Zug
-			JLA [4].setText (UnitArray [P2UnitNum].type + " (" + UnitArray [UC].DamType + ")");
+			JLA [4].setText (UnitArray [P2UnitNum].getDisplayName() + " (" + UnitArray [UC].DamType + ")");
 			Brett.newBoard (2);							// spezifische erlaubte Felder, auf die er setzen kann
-			bReady.setLabel ("Warte auf Client");
+			bReady.setLabel (I18n.text("Waiting for client"));
 			JLA [2].setText (Player [1]);
 		}
 		numStart ();
@@ -207,7 +207,7 @@ public class SetFrame extends JFrame implements ActionListener, MouseListener
 			{	UC = P1UnitNum;}
 		}	while ((UnitArray [UC].visible == true) && (tmp < (UnitArray.length)));
 														// bis Einheit gefunden, die noch nicht gesetzt wurde
-		JLA [4].setText (UnitArray [UC].type + " (" + UnitArray [UC].DamType + ")");
+		JLA [4].setText (UnitArray [UC].getDisplayName() + " (" + UnitArray [UC].DamType + ")");
 		Brett.setzen (UnitArray, UC);					// Einheiten auch graphisch setzen
 	}
 	
@@ -235,12 +235,12 @@ public class SetFrame extends JFrame implements ActionListener, MouseListener
 				else									// wemm Feld besetzt
 				{	
 					UC = tmpUC;							// anwählen der angeklickten Einheit
-					JLA [4].setText (UnitArray [UC].type + " (" + UnitArray [UC].DamType + ")");
+					JLA [4].setText (UnitArray [UC].getDisplayName() + " (" + UnitArray [UC].DamType + ")");
 					Brett.setzen (UnitArray, UC);
 				}
 			}
 			else										// Koordinaten nicht im richtigen Bereich
-			{	msg.msgError ("Bitte auf den freien Flächen setzen.", this);}
+			{	msg.msgError (I18n.text("Please place units on empty spaces."), this);}
 		}
 		
 		ready = op.setAll (UnitArray, P1UnitNum, IsServer);	// test, ob alle Einheiten gesetzt sind
@@ -275,7 +275,7 @@ public class SetFrame extends JFrame implements ActionListener, MouseListener
 	{
 		if (!IsServer)						// nur Client
 		{
-			bReady.setText ("Warte auf Host...");
+			bReady.setText (I18n.text("Waiting for host..."));
 			bReady.setEnabled (false);
 			send ("ClientSet");							// sagt, dass er alles gesetzt hat
 		}
@@ -353,7 +353,7 @@ public class SetFrame extends JFrame implements ActionListener, MouseListener
 	public void ClientReady (Unit [] UA)
 	{
 		UnitArray = op.ModUnitArray (UnitArray, UA, P1UnitNum);		// Server-Feld bekommt Daten des Client-Feldes
-		bReady.setLabel ("Spiel beginnen");
+		bReady.setLabel (I18n.text("Start game"));
 		turn = true;
 		boolean ready = op.setAll (UnitArray, P1UnitNum, IsServer);		// Test, ob Server schon alle gesetzt hat
 		if (ready)

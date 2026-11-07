@@ -31,3 +31,22 @@ verwenden Windows-1252 (entsprechend der bestehenden IntelliJ-Einstellung).
 Bilder und Einheiten werden unabhaengig vom Arbeitsverzeichnis gefunden.
 Netzwerk-Transferdateien liegen pro Prozess in einem eigenen temporaeren
 Verzeichnis und werden beim normalen Beenden entfernt.
+
+## Languages and unit descriptions
+
+Choose **English** or **Deutsch** in the startup menu before creating or joining a game.
+The choice applies to this player, including menus, dialogs, unit selection and battle screens.
+Hover over a unit image or its name in the selection screen to read its description.
+Clicking the image still opens the full unit details.
+
+Unit files use Windows-1252 encoding. The original `Unit:` and `Description:` fields
+remain the English defaults. These optional fields can be added on separate lines:
+
+```text
+Unit de: <Panzer>
+Description de: <German description here.>
+```
+
+Missing or empty German fields fall back to the original name or description.
+Names used by game rules and damage type identifiers stay unchanged. All six bundled
+units include descriptions in both languages.

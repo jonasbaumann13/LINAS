@@ -23,3 +23,5 @@ Obstacle after death?:	<true>
 Path for server pics:	<Artillery\ArtilleriePlayer2.gif>	@ <>	@ <>	@ <>	@ <>
 Path for client pics:	<Artillery\ArtilleriePlayer1.gif>	@ <>	@ <>	@ <>	@ <>
 Description:			<The Artillery with its long range and devasting damage is a very powerful unit. For its area effecting damage the artillery is useful against assemblies of enemie troups and soldiers. Nevertheless it has a weak armour and is, if alone, an easy target for scouts or undetected soldiers. Therefore the artillery is mostly used for fire support.>
+Unit de:			<Artillerie>
+Description de:		<Die Artillerie ist mit ihrer großen Reichweite und ihrem verheerenden Schaden eine sehr mächtige Einheit. Ihr Flächenschaden macht sie besonders gegen Ansammlungen feindlicher Truppen und Soldaten wirksam. Allerdings ist sie nur schwach gepanzert und allein ein leichtes Ziel für Aufklärer oder unentdeckte Soldaten. Daher wird die Artillerie meist zur Feuerunterstützung eingesetzt.>

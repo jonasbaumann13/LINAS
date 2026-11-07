@@ -22,6 +22,16 @@ public class Unit implements Serializable, Cloneable
 	public String DamType;
 	public String Picture;
 	public String Description;
+    public String GermanName, GermanDescription;
+
+    public String getDisplayName() {
+        return I18n.isGerman() && GermanName != null && !GermanName.trim().isEmpty() ? GermanName : type;
+    }
+
+    public String getDescription() {
+        return I18n.isGerman() && GermanDescription != null && !GermanDescription.trim().isEmpty()
+            ? GermanDescription : Description;
+    }
 	public boolean visible, ESelected, obstacleAD, IsServer;
 	
 	

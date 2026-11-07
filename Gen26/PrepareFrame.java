@@ -59,6 +59,7 @@ public class PrepareFrame extends JFrame implements ActionListener
 		this.IsServer		= IsServer;
 		BspU 				= BspUtmp;
 		anzUnitFiles 	= anzUnitFilestmp;
+		Num = new int[anzUnitFiles];
 		this.credits		= credits;
 		this.nick			= nick;
 		
@@ -84,7 +85,7 @@ public class PrepareFrame extends JFrame implements ActionListener
 	//******graphische Instanzierung******\\
 		for (int j = 0; j < anzUnitFiles; j++)
 		{	
-			lU [j] 			= new JLabel ("(" + BspU [j].price + ") " + BspU [j].type + " (" + BspU [j].DamType + ")");
+			lU [j] 			= new JLabel ("(" + BspU [j].price + ") " + BspU [j].getDisplayName() + " (" + BspU [j].DamType + ")");
 			lU [j].setFont (F);
 			lU [j].setForeground (C);
 			lNumberU [j] 	= new JLabel ("" + Num [j]);
@@ -94,17 +95,19 @@ public class PrepareFrame extends JFrame implements ActionListener
 			iPicU [j] 		= new ImageIcon (AppPaths.asset("Units/" + BspU [j].Picture));		//hier!!!
 			lPicU [j].setIcon (iPicU [j]);
 			lPicU [j].setFocusable (false);
-			lPicU [j].setToolTipText ("Beschreibung...");
+			String tooltip = I18n.tooltip(BspU[j].getDescription());
+			lPicU[j].setToolTipText(tooltip);
+			lU[j].setToolTipText(tooltip);
 		}
 		for (int k1 = 0; k1 < anzUnitFiles*2; k1+=2)
 		{	bNumberU [k1] = new JButton (iArrayT);}
 		for (int k2 = 1; k2 < anzUnitFiles*2; k2+=2)
 		{	bNumberU [k2] = new JButton (iArrayB);}
-		lcredits 	= new JLabel (credits + " Credits");	lcredits.setFont (FP);
+		lcredits 	= new JLabel (credits + I18n.text(" Credits"));	lcredits.setFont (FP);
 		lcredits.setForeground (CBlue);
 		bStart 		= new JButton ("");						bStart.setFont (F);
 		bStart.setForeground (C);
-		bExit 		= new JButton ("Beenden");				bExit.setFont (F);
+		bExit 		= new JButton (I18n.text("Exit"));				bExit.setFont (F);
 		bExit.setForeground (CExit);
 		msg 		= new Message ();
 		
@@ -141,7 +144,7 @@ public class PrepareFrame extends JFrame implements ActionListener
 		for (int m = 0; m < anzUnitFiles*2; m++)
 		{	bNumberU [m].setFocusable (false);}
 		bStart.setFocusable (false);						bExit.setFocusable (false);
-		this.setSize (new Dimension (600, 450));			this.setTitle ("Linas Vorbereitungen");
+		this.setSize (new Dimension (600, 450));			this.setTitle (I18n.text("Linas preparations"));
 		contentPane = (JPanel) this.getContentPane ();				contentPane.setLayout (null);
 		contentPane.setBackground (new Color (213, 222, 242));		contentPane.setCursor (curDef);
 		
@@ -163,10 +166,10 @@ public class PrepareFrame extends JFrame implements ActionListener
 		{	bNumberU [o].addActionListener (this);}
 						
 	//******Spezifische Anfangseinstellungen******\\
-		if (!IsServer)	bStart.setLabel ("Bestätigen");
+		if (!IsServer)	bStart.setLabel (I18n.text("Accept"));
 		if (IsServer)	
 		{
-			bStart.setLabel ("Warte auf Client");
+			bStart.setLabel (I18n.text("Waiting for client"));
 			bStart.setEnabled (false);
 		}
 		
@@ -227,7 +230,7 @@ public class PrepareFrame extends JFrame implements ActionListener
 			if (o.equals (bStart))					begin ();
 			if (o.equals (bExit))
 			{	
-				int answer = msg.msgConfirm ("Do you want to quit the game?", this);
+				int answer = msg.msgConfirm (I18n.text("Do you want to quit the game?"), this);
 				if (answer == 0)	{EndGame ();}
 			}
 			
@@ -246,7 +249,7 @@ public class PrepareFrame extends JFrame implements ActionListener
 		for (int i = 0; i < anzUnitFiles; i++)
 		{	UnitNum += Num [i];}
 		if (UnitNum == 0)
-		{	msg.msgError ("Sie müssen Einheiten für den Kampf auswählen!", this);}
+		{	msg.msgError (I18n.text("Select units for battle!"), this);}
 		else
 		{
 			if (!IsServer)	beginC ();
@@ -262,7 +265,7 @@ public class PrepareFrame extends JFrame implements ActionListener
 		if ((PorM.equals ("M")) && (Num [p] > 0))					{Num [p]--; credits += BspU [p].price;}
 
 		lNumberU [p].setText ("" + Num [p]);
-		lcredits.setText (credits + " Credits");
+		lcredits.setText (credits + I18n.text(" Credits"));
 	}				
 				
 /*********** - Wenn der Client mit seinen Einstellungen fertig ist - ***********/	
@@ -276,7 +279,7 @@ public class PrepareFrame extends JFrame implements ActionListener
 		{	bNumberU [j].setEnabled (false);}
 		
 		bStart.setEnabled (false);
-		bStart.setLabel ("Warte auf Host");
+		bStart.setLabel (I18n.text("Waiting for host"));
 	}
 
 /*********** - Bescheid, dass Client fertig ist - ***********/		
@@ -284,7 +287,7 @@ public class PrepareFrame extends JFrame implements ActionListener
 	public void ClientReady (Unit [] UA)
 	{
 		tmpUA = UA;											// Einheiten-Feld vom Client
-		bStart.setLabel ("Spiel beginnen");
+		bStart.setLabel (I18n.text("Start game"));
 		bStart.setEnabled (true);
 	}
 	

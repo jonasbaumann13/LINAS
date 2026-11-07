@@ -23,3 +23,5 @@ Obstacle after death?:	<true>
 Path for server pics:	<Jeep\AufklaererPlayer2.gif>	@ <>	@ <>	@ <>	@ <>
 Path for client pics:	<Jeep\AufklaererPlayer1.gif>	@ <>	@ <>	@ <>	@ <>
 Description:			<The Scout is a small and swift jeep with a heavy machine gun on its back. This makes it very efficiant against enemy soldiers or even, if it gets close enough, against enemy artillery.>
+Unit de:			<Aufklärer>
+Description de:		<Der Aufklärer ist ein kleiner und schneller Jeep mit einem schweren Maschinengewehr auf der Ladefläche. Damit ist er sehr wirksam gegen feindliche Soldaten oder sogar gegen feindliche Artillerie, wenn er nahe genug herankommt.>

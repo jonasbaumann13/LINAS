@@ -53,25 +53,25 @@ public class MainFrame extends JFrame implements ActionListener
 		this.Out 		= Out;
 
 		iHeading 		= new ImageIcon (AppPaths.asset("Pics/linasHeader.gif"));	lHeading = new JLabel (iHeading);
-		lEInfo 			= new JLabel ("Markierter Gegner");
+		lEInfo 			= new JLabel (I18n.text("Selected enemy"));
 		for (int l1 = 0; l1 < 10; l1++)
 		{
 			JLAInfo [l1] 	= new JLabel ("");
 			JLAInfoV [l1] 	= new JLabel ("--");
 		}
-		JLAInfo [0].setText ("Spieler:");		
-		JLAInfo [1].setText ("Einheit:");		
-		JLAInfo [2].setText ("Trefferpunkte:");
-		JLAInfo [3].setText ("Feuerkraft:");
-		JLAInfo [4].setText ("Reichweite:");
-		JLAInfo [5].setText ("Zugpunkte:");		
-		JLAInfo [6].setText ("Zugpunkte/Feld");	
-		JLAInfo [7].setText ("Zugpunkte/Schuss");	
-		JLAInfo [8].setText ("Einheit:");		
-		JLAInfo [9].setText ("TP:");
+		JLAInfo [0].setText (I18n.text("Player:"));
+		JLAInfo [1].setText (I18n.text("Unit:"));
+		JLAInfo [2].setText (I18n.text("Hitpoints:"));
+		JLAInfo [3].setText (I18n.text("Firepower:"));
+		JLAInfo [4].setText (I18n.text("Range:"));
+		JLAInfo [5].setText (I18n.text("Action points:"));
+		JLAInfo [6].setText (I18n.text("Points/move"));
+		JLAInfo [7].setText (I18n.text("Points/shot"));
+		JLAInfo [8].setText (I18n.text("Unit:"));
+		JLAInfo [9].setText (I18n.text("HP:"));
 		
-		JBA [0] = new JButton ("Weiter");						JBA [1] = new JButton ("--");
-		JBA [2] = new JButton ("Spiel beenden");				msg = new Message ();
+		JBA [0] = new JButton (I18n.text("Next"));						JBA [1] = new JButton ("--");
+		JBA [2] = new JButton (I18n.text("End game"));				msg = new Message ();
 		op = new Operations ();									Brett = new Spielfeld ();
 		
 		Brett.setSize (580, 580);			
@@ -149,7 +149,7 @@ public class MainFrame extends JFrame implements ActionListener
 		if (!IsServer)								// nur für Client
 		{	
 			JLAInfoV [0].setText (Player [0]);
-			JBA [1].setLabel ("Zug beenden");
+			JBA [1].setLabel (I18n.text("End turn"));
 			UC = 0;
 			newInfo ();											// Informationen zur jeweiligen Einheit
 			wait = false;
@@ -158,7 +158,7 @@ public class MainFrame extends JFrame implements ActionListener
 		{	
 			JBA [0].setEnabled (false);
 			JBA [1].setEnabled (false);
-			JBA [1].setLabel ("Warte auf Client...");
+			JBA [1].setLabel (I18n.text("Waiting for client..."));
 			JLAInfoV [0].setText (Player [1]);
 			keyNext 	= false;
 			keyEndTurn 	= false;
@@ -230,8 +230,8 @@ public class MainFrame extends JFrame implements ActionListener
 	public void EndTurn ()
 	{
 		send ("EndTurn");										// dies dem anderen Spieler mitteilen
-		if (!IsServer)		JBA [1].setLabel ("Warte auf Server");
-		if (IsServer)		JBA [1].setLabel ("Warte auf Client");
+		if (!IsServer)		JBA [1].setLabel (I18n.text("Waiting for server"));
+		if (IsServer)		JBA [1].setLabel (I18n.text("Waiting for client"));
 		UC 			= -1;										// keine Einheit angewählt lassen
 		JBA [0].setEnabled (false);
 		JBA [1].setEnabled (false);
@@ -252,7 +252,7 @@ public class MainFrame extends JFrame implements ActionListener
 		while ((UnitArray [UC].TP <= 0) && (UC <= UnitArray.length))		// Auswählen der nächsten lebenden Einheit
 		{	UC++;}
 				
-		JBA [1].setLabel ("Zug beenden");
+		JBA [1].setLabel (I18n.text("End turn"));
 		UnitArray 	= UA;
 		wait 		= false;
 		JBA [0].setEnabled (true);
@@ -354,7 +354,7 @@ public class MainFrame extends JFrame implements ActionListener
 		}
 	}
 
-/*********** - Bewegung, realisiert durch Tastatur und "Weiter" durch "+"- ***********/
+/*********** - Bewegung, realisiert durch Tastatur und I18n.text("Next") durch "+"- ***********/
 
 	public void move (int keyCode)
 	{
@@ -498,7 +498,7 @@ public class MainFrame extends JFrame implements ActionListener
 	{
 		if (!wait)
 		{
-			JLAInfoV [1].setText (UnitArray [UC].type + " (" + UnitArray [UC].DamType + ")");
+			JLAInfoV [1].setText (UnitArray [UC].getDisplayName() + " (" + UnitArray [UC].DamType + ")");
 			JLAInfoV [2].setText ("" + UnitArray [UC].TP);
 			JLAInfoV [3].setText ("" + UnitArray [UC].Dam);
 			JLAInfoV [4].setText (UnitArray [UC].RW[0] + " - " + UnitArray [UC].RW[1]);
@@ -522,7 +522,7 @@ public class MainFrame extends JFrame implements ActionListener
 		
 		if (tmpUC == -1)							// keiner ausgewählt
 		{
-			lEInfo.setText ("Markierter Gegner");
+			lEInfo.setText (I18n.text("Selected enemy"));
 			JLAInfoV [8].setText ("--");
 			JLAInfoV [9].setText ("--");
 		}
@@ -530,10 +530,10 @@ public class MainFrame extends JFrame implements ActionListener
 		else										// ausgewählter Gegner
 		{
 			if (tmpUC < P1UnitNum)
-			{	lEInfo.setText ("Markierter Gegner (" + Player [0] + ")");}
+			{	lEInfo.setText (I18n.text("Selected enemy (") + Player [0] + ")");}
 			else
-			{	lEInfo.setText ("Markierter Gegner (" + Player [1] + ")");}		
-			JLAInfoV [8].setText ("" + UnitArray [tmpUC].type);
+			{	lEInfo.setText (I18n.text("Selected enemy (") + Player [1] + ")");}
+			JLAInfoV [8].setText ("" + UnitArray [tmpUC].getDisplayName());
 			JLAInfoV [9].setText ("" + UnitArray [tmpUC].TP);
 			UnitArray [tmpUC].ESelected = true;
 		}
@@ -563,10 +563,10 @@ public class MainFrame extends JFrame implements ActionListener
 		if (won)
 		{	
 			send ("won");							// dem anderen Spieler dies mitteilen
-			msg.msgInform ("You are Victorius!", this);		// und natürlich dem Gewinner!
+			msg.msgInform (I18n.text("You are victorious!"), this);		// und natürlich dem Gewinner!
 		}
 		if (!won)
-		{	msg.msgInform ("You have been defeated!", this);}
+		{	msg.msgInform (I18n.text("You have been defeated!"), this);}
 	}
 	
 /*********** - testen, ob man die letzte feindliche Einheit zerstört hat - ***********/

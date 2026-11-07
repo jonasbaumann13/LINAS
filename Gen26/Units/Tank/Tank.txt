@@ -22,4 +22,6 @@ Points per attack:		<4>			@ <>	@ <5>	@ <6>	@ <10>
 Obstacle after death?:	<true>
 Path for server pics:	<Tank\PanzerPlayer2.gif>	@ <>	@ <>	@ <>	@ <>
 Path for client pics:	<Tank\PanzerPlayer1.gif>	@ <>	@ <>	@ <>	@ <>
-Description:			<>
+Description:			<The Tank combines strong armour with a powerful anti-tank gun. This makes it a reliable unit for direct attacks against enemy vehicles. Nevertheless it is vulnerable to anti-tank teams, and damage soon reduces its mobility and rate of fire. Therefore the tank is best supported by scouts and infantry.>
+Unit de:			<Panzer>
+Description de:		<Der Panzer verbindet eine starke Panzerung mit einer wirkungsvollen Panzerabwehrkanone. Damit eignet er sich gut für direkte Angriffe auf feindliche Fahrzeuge. Dennoch ist er gegen Panzerabwehrteams verwundbar, und erlittene Schäden verringern bald seine Beweglichkeit und Feuergeschwindigkeit. Daher wird der Panzer am besten von Aufklärern und Infanterie unterstützt.>

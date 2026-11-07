@@ -22,4 +22,6 @@ Points per attack:		<1>				@ <>	@ <>	@ <2>	@ <2>
 Obstacle after death?:	<false>
 Path for server pics:	<Soldier\Soldier(4)Player2.gif>	@ <>	@ <Soldier\Soldier(3)Player2.gif>	@ <Soldier\Soldier(2)Player2.gif>	@ <Soldier\Soldier(1)Player2.gif>
 Path for client pics:	<Soldier\Soldier(4)Player1.gif>	@ <>	@ <Soldier\Soldier(3)Player1.gif>	@ <Soldier\Soldier(2)Player1.gif>	@ <Soldier\Soldier(1)Player1.gif>
-Description:			<>
+Description:			<The machine gun team is an inexpensive infantry unit with good sight and camouflage. Its low firing cost allows it to attack enemy soldiers several times in one round. Nevertheless its light weapon does little damage to heavy armour, and the team is vulnerable to machine guns and area damage. Therefore it is best used to support other troops and watch for approaching enemies.>
+Unit de:			<Team>
+Description de:		<Das Maschinengewehrteam ist eine günstige Infanterieeinheit mit guter Sicht und Tarnung. Die geringen Kosten pro Schuss erlauben mehrere Angriffe auf feindliche Soldaten in einer Runde. Allerdings richtet seine leichte Waffe gegen schwere Panzerung nur wenig Schaden an, und das Team ist gegen Maschinengewehre sowie Flächenschaden verwundbar. Daher unterstützt es am besten andere Truppen und beobachtet herannahende Feinde.>

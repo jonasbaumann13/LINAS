@@ -22,4 +22,6 @@ Points per attack:		<3>				@ <>	@ <4>	@ <4>	@ <7>
 Obstacle after death?:	<false>
 Path for server pics:	<Soldier\Soldier(4)Player2.gif>	@ <>	@ <Soldier\Soldier(3)Player2.gif>	@ <Soldier\Soldier(2)Player2.gif>	@ <Soldier\Soldier(1)Player2.gif>
 Path for client pics:	<Soldier\Soldier(4)Player1.gif>	@ <>	@ <Soldier\Soldier(3)Player1.gif>	@ <Soldier\Soldier(2)Player1.gif>	@ <Soldier\Soldier(1)Player1.gif>
-Description:			<>
+Description:			<The mortar team provides fire support with explosive shells that damage several nearby targets. Its camouflage and longer range allow it to support an attack from behind the front line. Nevertheless it cannot fire at enemies directly beside it and is vulnerable to machine guns and area damage. Therefore the team needs protection from other units when the enemy closes in.>
+Unit de:			<Team>
+Description de:		<Das Mörserteam bietet Feuerunterstützung mit explosiven Granaten, die mehrere benachbarte Ziele treffen. Seine Tarnung und die größere Reichweite erlauben es ihm, einen Angriff hinter der Frontlinie zu unterstützen. Allerdings kann es nicht auf unmittelbar benachbarte Gegner feuern und ist gegen Maschinengewehre sowie Flächenschaden verwundbar. Daher braucht das Team den Schutz anderer Einheiten, wenn der Feind näher kommt.>

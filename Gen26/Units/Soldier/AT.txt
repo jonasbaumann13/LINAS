@@ -22,4 +22,6 @@ Points per attack:		<3>				@ <>	@ <4>	@ <4>	@ <6>
 Obstacle after death?:	<false>
 Path for server pics:	<Soldier\Soldier(4)Player2.gif>	@ <>	@ <Soldier\Soldier(3)Player2.gif>	@ <Soldier\Soldier(2)Player2.gif>	@ <Soldier\Soldier(1)Player2.gif>
 Path for client pics:	<Soldier\Soldier(4)Player1.gif>	@ <>	@ <Soldier\Soldier(3)Player1.gif>	@ <Soldier\Soldier(2)Player1.gif>	@ <Soldier\Soldier(1)Player1.gif>
-Description:			<>
+Description:			<The anti-tank team carries a powerful weapon for fighting enemy vehicles. Its camouflage allows it to wait undetected and strike at tanks or scouts that come within range. Nevertheless it is slow and vulnerable to machine guns and area damage. Therefore the team is most useful in ambushes with support from other units.>
+Unit de:			<Team>
+Description de:		<Das Panzerabwehrteam trägt eine starke Waffe zur Bekämpfung feindlicher Fahrzeuge. Seine Tarnung erlaubt es ihm, unentdeckt auf Panzer oder Aufklärer in Reichweite zu warten. Allerdings ist es langsam und gegen Maschinengewehre sowie Flächenschaden verwundbar. Daher eignet sich das Team besonders für Hinterhalte mit Unterstützung anderer Einheiten.>

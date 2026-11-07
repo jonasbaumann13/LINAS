@@ -267,8 +267,8 @@ public class Comunication extends Thread
 					if (Command.equals ("runAway"))						// Falls ein Spieler vor der Entscheidung das Spiel verlässt	
 					{
 						MFrame.send ("quit");							// Spiel des Spielers, der es beenden wollte wird beendet
-						System.out.println ("The enemy runs away!");// Trost für den, der nun allein dasitzt
-						msg.msgInform ("The enemy runs away!", MFrame);
+						System.out.println (I18n.text("The enemy runs away!"));// Trost für den, der nun allein dasitzt
+						msg.msgInform (I18n.text("The enemy runs away!"), MFrame);
 						Command = "quit";								// Hier wird das Spiel dann auch beendet
 						sleep (200);						
 					}

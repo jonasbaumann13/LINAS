@@ -57,7 +57,7 @@ public class Description extends JFrame implements ActionListener
 		lHeading 		= new JLabel (iHeading);
 		bLast 			= new JButton (iLast);				bLast.setFocusable (false);
 		bNext 			= new JButton (iNext);				bNext.setFocusable (false);
-		bBack 			= new JButton ("zurück");			bBack.setFocusable (false);
+		bBack 			= new JButton (I18n.text("Back"));			bBack.setFocusable (false);
 		JLAInfo [16] 	= new JLabel ();
 		for (int i1 = 0; i1 < 16; i1++)
 		{
@@ -83,22 +83,22 @@ public class Description extends JFrame implements ActionListener
 		TADescr.setForeground (C);
 		SPDescr = new JScrollPane (TADescr);
 		
-		JLAInfo [0].setText ("Cost:");
-		JLAInfo [1].setText ("Hitpoints:");
-		JLAInfo [2].setText ("Armour for " + bspU [UC].ArmourType [0] + ":");
-		JLAInfo [3].setText ("Armour for " + bspU [UC].ArmourType [1] + ":");
-		JLAInfo [4].setText ("Armour for " + bspU [UC].ArmourType [2] + ":");
-		JLAInfo [5].setText ("Maximum Damage:");
-		JLAInfo [6].setText ("Damage type:");
-		JLAInfo [7].setText ("Factor for area damage:");
-		JLAInfo [8].setText ("range:");								////////////////////////////
-		JLAInfo [9].setText ("Radius des Gebietsschadens:");
-		JLAInfo [10].setText ("Sichtweite:");
-		JLAInfo [11].setText ("Tarnung:");
-		JLAInfo [12].setText ("Zugpunkte pro Runde:");
-		JLAInfo [13].setText ("Zugpunkte pro Feld:");
-		JLAInfo [14].setText ("Zugpunkte pro Angriff:");
-		JLAInfo [15].setText ("Hindernis nach dem Tod?");
+		JLAInfo [0].setText (I18n.text("Cost:"));
+		JLAInfo [1].setText (I18n.text("Hitpoints:"));
+		JLAInfo [2].setText (I18n.text("Armour for ") + bspU [UC].ArmourType [0] + ":");
+		JLAInfo [3].setText (I18n.text("Armour for ") + bspU [UC].ArmourType [1] + ":");
+		JLAInfo [4].setText (I18n.text("Armour for ") + bspU [UC].ArmourType [2] + ":");
+		JLAInfo [5].setText (I18n.text("Maximum Damage:"));
+		JLAInfo [6].setText (I18n.text("Damage type:"));
+		JLAInfo [7].setText (I18n.text("Factor for area damage:"));
+		JLAInfo [8].setText (I18n.text("range:"));								////////////////////////////
+		JLAInfo [9].setText (I18n.text("Area damage radius:"));
+		JLAInfo [10].setText (I18n.text("Sight range:"));
+		JLAInfo [11].setText (I18n.text("Camouflage:"));
+		JLAInfo [12].setText (I18n.text("Points per round:"));
+		JLAInfo [13].setText (I18n.text("Points per move:"));
+		JLAInfo [14].setText (I18n.text("Points per attack:"));
+		JLAInfo [15].setText (I18n.text("Obstacle after death?"));
 		
 		
 	//******Koordinaten der Objekte******\\
@@ -132,7 +132,7 @@ public class Description extends JFrame implements ActionListener
 		
 	//******---------******\\
 		
-		this.setSize (new Dimension (560, 520));				this.setTitle ("Linas Beschreibungen");
+		this.setSize (new Dimension (560, 520));				this.setTitle (I18n.text("Linas descriptions"));
 		contentPane = (JPanel) this.getContentPane ();			contentPane.setLayout (null);
 		contentPane.setBackground (new Color (213, 222, 242));
 		
@@ -191,10 +191,10 @@ public class Description extends JFrame implements ActionListener
 		JLAInfoV [12].setText (bspU [UC].ZP [0] + "");
 		JLAInfoV [13].setText (bspU [UC].ZP [1] + "");
 		JLAInfoV [14].setText (bspU [UC].ZP [2] + "");
-		if (bspU [UC].obstacleAD)	JLAInfoV [15].setText ("Ja");
-		else				JLAInfoV [15].setText ("Nein");
-		JLAInfoV [16].setText (bspU [UC].type + " (" + bspU [UC].DamType + ")");
-		TADescr.setText (bspU [UC].Description);
+		if (bspU [UC].obstacleAD)	JLAInfoV [15].setText (I18n.text("Yes"));
+		else				JLAInfoV [15].setText (I18n.text("No"));
+		JLAInfoV [16].setText (bspU [UC].getDisplayName() + " (" + bspU [UC].DamType + ")");
+		TADescr.setText (bspU [UC].getDescription());
 	}
 	
 	

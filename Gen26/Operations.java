@@ -411,23 +411,19 @@ public class Operations
 		Unit UnitType 			= new Unit ();
 		
 		linasString [] values 	= new linasString [25];
-		String [] sA 			= new String [50];
-		
-		int n = 0;
+        String germanName = null, germanDescription = null;
+        int n = 0;
+        try (BufferedReader BR = new BufferedReader(new InputStreamReader(
+                new FileInputStream(sFile), java.nio.charset.Charset.forName("windows-1252"))))
+        {
+            String line;
+            while ((line = BR.readLine()) != null) {
+                if (!notEmpty(line)) continue;
+                if (line.trim().startsWith("Unit de:")) germanName = new linasString(bigCut(line)).getS(0);
+                else if (line.trim().startsWith("Description de:")) germanDescription = new linasString(bigCut(line)).getS(0);
+                else if (n < values.length) values[n++] = new linasString(bigCut(line));
+            }
 
-		try
-		{
-			BufferedReader BR = new BufferedReader (new FileReader (sFile));
-
-			while ((sA [n] = BR.readLine ()) != null)
-			{
-				if (notEmpty (sA [n]))
-				{
-					values [n] = new linasString (bigCut (sA [n]));
-					n++;
-				}
-			}
-			
 			for (int i1 = 0; i1 < values.length; i1++)
 			{
 				for (int i2 = 0; i2 < values[i1].getL(); i2++)
@@ -462,6 +458,8 @@ public class Operations
 			else 												obstacleAD = false;
 
 			UnitType = new Unit (price,Name,typeV,ArmourType,Description,obstacleAD,tpA,damA,sightA,camouflageA,zpA,rwA,rwTypeA,armourA,admA,damTypeA,pictureAS,pictureAC,IsServer);
+            UnitType.GermanName = germanName;
+            UnitType.GermanDescription = germanDescription;
 		}
 		catch (IOException e)
 		{}
