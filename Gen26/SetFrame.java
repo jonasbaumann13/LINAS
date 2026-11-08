@@ -163,14 +163,7 @@ public class SetFrame extends JFrame implements ActionListener, MouseListener
 		
 		
 		//******KeyListener******\\
-		this.addKeyListener (KA = new KeyAdapter ()
-		{
-			public void keyPressed (KeyEvent e)
-			{	
-				int C = e.getKeyCode ();
-				if (C==107)	Next ();				
-			}			
-		});
+        KeyBindings.install(getRootPane(), true, command -> Next());
 	}
 
 /*********** - Reaktion auf Buttonklicks - ***********/		

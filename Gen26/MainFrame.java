@@ -127,20 +127,9 @@ public class MainFrame extends JFrame implements ActionListener
 			}
 		});
 		
-		this.addKeyListener (KA = new KeyAdapter ()
-		{
-			public void keyReleased (KeyEvent e)
-			{	}
-			public void keyTyped (KeyEvent e)
-			{	}
-			
-			public void keyPressed (KeyEvent e)
-			{	
-				int C = e.getKeyCode ();
-				if ((((C>96)&&(C<103))||(C==10)||(C==107)) && (!wait))
-				{	move (C);}
-			}
-		});
+        KeyBindings.install(getRootPane(), false, command -> {
+            if (!wait) move(command);
+        });
 
 		Player = op.player (UnitArray);
 		P1UnitNum = op.UnitNum (UnitArray, 1);

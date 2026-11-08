@@ -50,3 +50,16 @@ Description de: <German description here.>
 Missing or empty German fields fall back to the original name or description.
 Names used by game rules and damage type identifiers stay unchanged. All six bundled
 units include descriptions in both languages.
+
+## Keyboard controls
+
+Open **Keypad Configuration** in the main menu to view or change controls.
+Click a binding and press a replacement key without modifiers; Escape cancels capture.
+Each action must have a unique key. **Save** applies the changes and stores them for
+future launches on this computer. **Cancel** discards edits, and **Restore defaults**
+resets the draft until saved. The window follows the selected English/German language.
+
+Defaults (Num Lock enabled): numpad 1/2/3 move down-left/down/down-right;
+numpad 4/5/6 move up-left/up/up-right; numpad + selects the next unit during
+deployment and battle; Enter ends the battle turn. Left-click selects a unit;
+right-click attacks. Chat still uses Enter to send messages.
