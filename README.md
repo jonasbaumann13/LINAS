@@ -64,6 +64,11 @@ numpad 4/5/6 move up-left/up/up-right; numpad + selects the next unit during
 deployment and battle; Enter ends the battle turn. Left-click selects a unit;
 right-click attacks. Chat still uses Enter to send messages.
 
+During battle, **Next / Weiter** and the next-unit key cycle through your army in
+its original order, wrapping after the last unit. Destroyed units and units without
+enough action points to move or fire are skipped. Mouse selection stays available
+for inspecting exhausted units; the next turn restores cycling.
+
 ## Headless battles and Python / reinforcement learning
 
 Compile the headless interface and run the two-bot example (JDK 17+, Python 3.10+;

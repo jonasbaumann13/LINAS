@@ -187,35 +187,35 @@ public final class MainFrame extends JFrame implements ActionListener
 
 /*********** - Anwählen der nächsten Einheit - ***********/	
 
-	public void Next ()
-	{
-		int tmp = 0;
-		do														// bis eine "lebende", noch bewegbare Einheit gefunden ist
-		{
-			tmp++;												// für Abbruch falls nicht
-			UC++;
-			if (!IsServer&&(UC >= P1UnitNum))
-			{	UC = 0;}
-			if (IsServer&&(UC >= UnitArray.length))
-			{	UC = P1UnitNum;}
-		}	while (((UnitArray [UC].TP <= 0) || (!op.ZPLeft (UnitArray, UC))) && (tmp <= UnitArray.length));
-		if (tmp > P1UnitNum)
-		{														// Anwählen der Einheit mit dem geringsten Feldplatz, aber lebend
-			if (!IsServer)
-			{
-				for (int i1 = (P1UnitNum - 1); i1 >= 0; i1--)
-				{	if (UnitArray [i1].TP > 0)	UC = i1;}
-			}
-			if (IsServer)
-			{
-				for (int i1 = (UnitArray.length - 1); i1 >= P1UnitNum; i1--)
-				{	if (UnitArray [i1].TP > 0)	UC = i1;}
-			}
-			JBA [0].setEnabled (false);
-			keyNext = false;
-		}
-	}
-	
+    public void Next ()
+    {
+        if (wait || end) return;
+        int next = nextActionableUnit(UC);
+        if (next != -1) UC = next;
+        updateNextAvailability();
+    }
+
+    /** Keep the original army order, wrapping once within this player's own units. */
+    private int nextActionableUnit(int current)
+    {
+        int first = IsServer ? P1UnitNum : 0;
+        int limit = IsServer ? UnitArray.length : P1UnitNum;
+        int count = limit - first;
+        if (count <= 0) return -1;
+        int offset = current >= first && current < limit ? current - first : -1;
+        for (int step = 1; step <= count; step++) {
+            int candidate = first + (offset + step) % count;
+            if (UnitArray[candidate].TP > 0 && op.ZPLeft(UnitArray, candidate)) return candidate;
+        }
+        return -1;
+    }
+
+    private void updateNextAvailability()
+    {
+        keyNext = !wait && !end && nextActionableUnit(UC) != -1;
+        JBA[0].setEnabled(keyNext);
+    }
+
 /*********** - Runde beendet - ***********/	
 
 	public void EndTurn ()
@@ -252,14 +252,12 @@ public final class MainFrame extends JFrame implements ActionListener
 
 		JBA [1].setText (I18n.text("End turn"));
 		wait 		= false;
-		JBA [0].setEnabled (true);
 		JBA [1].setEnabled (true);
 		newEnemyInfo (-1);										// kein Gegner angewählt
 		UnitArray 	= op.newRound (UnitArray);					// neue Zugpunkte vergeben
 		UnitArray 	= op.UnitVisibility (UnitArray, P1UnitNum, IsServer);			// Sichtbarkeit setzen
 		Brett.setzen (UnitArray, UC);							// alles zeichnen
 		newInfo ();												// neue Info
-		keyNext 	= true;											// "+" wieder betätigbar
 		keyEndTurn 	= true;										// "Enter" wieder betätigbar
 	}
 
@@ -361,6 +359,7 @@ public final class MainFrame extends JFrame implements ActionListener
 	
 	public void newInfo ()
 	{
+        updateNextAvailability();
 		if (!wait)
 		{
 			JLAInfoV [1].setText (UnitArray [UC].getDisplayName() + " (" + UnitArray [UC].DamType + ")");
