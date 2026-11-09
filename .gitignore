@@ -29,3 +29,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+### Python examples ###
+__pycache__/
+*.pyc

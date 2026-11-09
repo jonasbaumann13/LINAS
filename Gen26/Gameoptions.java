@@ -69,7 +69,7 @@ public class Gameoptions extends JFrame implements ActionListener
 		
 		Op = new Operations ();
 			
-		this.setSize (new Dimension (570, 450));					this.setTitle ("Linas");
+		this.setSize (new Dimension (570, IsServer ? 540 : 450));					this.setTitle ("Linas");
 		ContentPane = (JPanel) this.getContentPane ();				ContentPane.setLayout (null);
 		ContentPane.setBackground (new Color (213, 222, 242));		Msg 		= new Message ();
 		CBA[0]		= new JCheckBox (I18n.text("Fog of war"));
@@ -171,6 +171,7 @@ public class Gameoptions extends JFrame implements ActionListener
 		
 		if (IsServer)
 		{
+			addHostAddress();
 			BStart.setEnabled (false);
 			BStart.setLabel (I18n.text("Waiting"));
 			LA[3].setText (NickS);
@@ -186,6 +187,64 @@ public class Gameoptions extends JFrame implements ActionListener
 	}
 		
 		
+/** Public address discovery runs in the background so hosting works even offline. */
+    private void addHostAddress() {
+        JLabel label = new JLabel(I18n.text("Internet IP:"));
+        label.setBounds(10, 410, 110, 25);
+        ContentPane.add(label);
+        JTextField address = new JTextField();
+        address.setEditable(false);
+        address.setBounds(120, 410, 290, 25);
+        ContentPane.add(address);
+        JButton retry = new JButton(I18n.text("Retry"));
+        retry.setBounds(420, 410, 105, 25);
+        ContentPane.add(retry);
+        JLabel hint = new JLabel(I18n.text("Share this IP with your opponent. Forward TCP port 1111."));
+        hint.setBounds(10, 440, 535, 25);
+        ContentPane.add(hint);
+        address.setToolTipText(I18n.text("Public IPv4 provided by api.ipify.org. Select the address to copy it."));
+        retry.addActionListener(event -> lookupHostAddress(address, retry));
+        lookupHostAddress(address, retry);
+    }
+
+    private void lookupHostAddress(JTextField address, JButton retry) {
+        address.setText(I18n.text("Looking up public IP..."));
+        retry.setEnabled(false);
+        new SwingWorker<String, Void>() {
+            protected String doInBackground() throws Exception {
+                HttpURLConnection connection = (HttpURLConnection)
+                    new URL("https://api.ipify.org").openConnection();
+                connection.setConnectTimeout(5000);
+                connection.setReadTimeout(5000);
+                connection.setInstanceFollowRedirects(false);
+                try {
+                    if (connection.getResponseCode() != 200) throw new IOException("IP lookup failed");
+                    try (InputStream input = connection.getInputStream()) {
+                        String ip = new String(input.readNBytes(65), java.nio.charset.StandardCharsets.US_ASCII).trim();
+                        String[] parts = ip.split("\\.", -1);
+                        if (parts.length != 4) throw new IOException("Invalid IPv4 address");
+                        for (String part : parts) {
+                            if (!part.matches("[0-9]{1,3}") || Integer.parseInt(part) > 255)
+                                throw new IOException("Invalid IPv4 address");
+                        }
+                        return ip;
+                    }
+                } finally {
+                    connection.disconnect();
+                }
+            }
+            protected void done() {
+                try {
+                    address.setText(get());
+                } catch (Exception failure) {
+                    address.setText(I18n.text("Unavailable - check internet and retry"));
+                }
+                address.setCaretPosition(0);
+                retry.setEnabled(true);
+            }
+        }.execute();
+    }
+
 /*********** - Programmende, wenn das Fenster geschlossen wird - ***********/
 
 	protected void processWindowEvent (WindowEvent e)

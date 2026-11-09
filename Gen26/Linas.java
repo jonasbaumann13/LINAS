@@ -23,7 +23,19 @@ public class Linas
 /*********** - Main-Methode - ***********/
 
 	public static void main (String[] args)
-	{
+    {
+        if (args.length > 0 && args[0].equals("--rl-server")) {
+            try {
+                if (args.length > 2) throw new IllegalArgumentException("Usage: Linas --rl-server [port]");
+                int port = args.length == 2 ? Integer.parseInt(args[1]) : 8765;
+                if (port < 0 || port > 65535) throw new IllegalArgumentException("Port must be 0..65535");
+                RlServer.run(port);
+            } catch (Exception e) {
+                System.err.println("Cannot start RL server: " + e.getMessage());
+                System.exit(1);
+            }
+            return;
+        }
 		try
 		{	UIManager.setLookAndFeel (UIManager.getSystemLookAndFeelClassName());}
 		catch (Exception e)

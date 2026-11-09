@@ -267,58 +267,23 @@ public class MainFrame extends JFrame implements ActionListener
 
 	public void rightButton (MouseEvent e)
 	{
-		int distance, damage, tmpAD, tmpUC, rwMod;
-		int [] ADVictims = new int [UnitArray.length];
-				
-		xy = op.koAngleich (e.getX (), e.getY ());				// modifizierte Mauskoordinaten
-		tmpUC = op.occupied (xy [0], xy [1], UnitArray);		// gucken, wer getroffen würde
-		distance = op.distance (xy [0], xy [1], UnitArray, UC);	// Distanz zum Ziel
-		rwMod = op.rwMod (distance, UnitArray, UC);
+        xy = op.koAngleich(e.getX(), e.getY());
+        int target = op.occupied(xy[0], xy[1], UnitArray);
+        if (BattleRules.fire(op, UnitArray, P1UnitNum, UC, xy[0], xy[1],
+                () -> (int) (Math.random() * 100))) {
+            UnitArray = op.UnitVisibility(UnitArray, P1UnitNum, IsServer);
+            newInfo();
+            newEnemyInfo(target);
+            Brett.setPics(UnitArray);
+            send("Move");
+            Brett.setzen(UnitArray, UC);
+            flame(xy[0], xy[1]);
+            send("EnemyFire");
+            send("Flame");
+            lastDestroyed();
+        }
+    }
 
-		if (rwMod != 0)											// Distanz muss in Reichweite sein
-		{
-			if (UnitArray [UC].ZP[0] >= UnitArray [UC].ZP[2])	// Es müssen noch genug Zugpunkte vorhanden sein
-			{
-				damage = op.damage (distance, rwMod, UnitArray, UC);	// Schadensberechnung
-				System.out.println ("Damage: " + damage);
-				
-				UnitArray [UC].ZP[0] -= UnitArray [UC].ZP[2];			// Abziehen der Zugpunkte
-									
-				if ((tmpUC != -1) && (UnitArray [tmpUC].TP > 0))		// Ziel muss vorhanden sein und noch Trefferpunkte besitzen	
-				{
-					UnitArray [tmpUC].TP -= op.ArmourMod (UnitArray, damage, UC, tmpUC);	// Schaden (noch mal durch Rüstung modifiziert) wird von Trefferpunkten abgezogen					
-					UnitArray = op.DamMod (UnitArray, tmpUC, P1UnitNum);					// dadurch mögliche Veränderungen werden berechnet
-				}
-					
-				if (UnitArray [UC].RW[2] != 0)					// Wenn es eine Einheit mit Gebietsschaden ist (z.B. Artillerie)
-				{	
-					ADVictims = op.AreaDamageMod (UnitArray, UC, xy [0], xy [1]);	// Opfer des Gebietsschadens werden berechnet
-
-					for (int i = 0; i < UnitArray.length; i++)
-					{
-						if ((ADVictims [i] != 0) && (UnitArray [i].TP > 0))			// Ausmaß des Gebietsschadens berechnet
-						{
-							tmpAD 				 = (int) (damage * Math.pow (UnitArray [UC].AreaDamageMod, ADVictims [i]));	// Gebietsschaden berechnet
-							UnitArray [i].TP 	-= op.ArmourMod (UnitArray, tmpAD, UC, i);;	// Schaden von TP abgezogen
-							UnitArray 			 = op.DamMod (UnitArray, i, P1UnitNum);		// dadurch mögliche Veränderungen werden berechnet
-						}
-					}
-				}
-			
-				UnitArray = op.UnitVisibility (UnitArray, P1UnitNum, IsServer);	// erneut Sicht berechnet (zerstörte Einheiten sehen nichts mehr)			
-				newInfo ();
-				newEnemyInfo (tmpUC);
-				Brett.setPics (UnitArray);
-				send ("Move");							// Feld an anderen Spieler senden
-				Brett.setzen (UnitArray, UC);			// graphische realisierung
-				flame (xy [0], xy [1]);					// Flamme setzen
-				send ("EnemyFire");
-				send ("Flame");							// Flamme bei anderem Spieler setzen
-				lastDestroyed ();						// testen ob aktueller Spieler gewonnen hat
-			}
-		}
-	}
-	
 /*********** - Auswählen - ***********/
 	
 	public void leftButton (MouseEvent e)
@@ -347,111 +312,14 @@ public class MainFrame extends JFrame implements ActionListener
 
 	public void move (int keyCode)
 	{
-		int X, Y;										// Koordinaten
-		switch (keyCode)
-		{
-			case 97:	
-					X = UnitArray [UC].PosX - 22;
-					Y = UnitArray [UC].PosY + 14;
-					  
-			// Num 1
-					if ((UnitArray [UC].PosX < 5) | (UnitArray [UC].PosY > 540) | (op.occupied (X, Y, UnitArray) != -1))
-					{}		// im Feld und nicht besetzt
-					else
-					{	
-						if (UnitArray [UC].ZP[0] >= UnitArray [UC].ZP [1])
-						{	
-							UnitArray [UC].PosX = X;
-							UnitArray [UC].PosY = Y;
-							UnitArray [UC].ZP[0] -= UnitArray [UC].ZP[1];
-						}
-					}
-					break;
+        if (keyCode >= 97 && keyCode <= 102) {
+            BattleRules.move(op, UnitArray, UC, keyCode - 97);
+        } else if (keyCode == 107 && keyNext) {
+            Next();
+        } else if (keyCode == 10 && keyEndTurn) {
+            EndTurn();
+        }
 
-			case 98:	X = UnitArray [UC].PosX;
-					Y = UnitArray [UC].PosY + 28;
-			// Num 2
-					if ((UnitArray [UC].PosY > 520) | (op.occupied (X, Y, UnitArray) != -1))
-					{}		// im Feld und nicht besetzt
-					else
-					{	
-						if (UnitArray [UC].ZP[0] >= UnitArray [UC].ZP [1])
-						{ 	
-							UnitArray [UC].PosY = Y;
-							UnitArray [UC].ZP[0] -= UnitArray [UC].ZP[1];
-						}
-					}
-					break;
-
-			case 99:	X = UnitArray [UC].PosX + 22;
-					Y = UnitArray [UC].PosY + 14;
-			// Num 3
-					if ((UnitArray [UC].PosX > 530) | (UnitArray [UC].PosY > 540) | (op.occupied (X, Y, UnitArray) != -1))
-					{}		// im Feld und nicht besetzt
-					else
-					{	
-						if (UnitArray [UC].ZP[0] >= UnitArray [UC].ZP [1])
-						{
-							UnitArray [UC].PosX = X;
-							UnitArray [UC].PosY = Y;
-							UnitArray [UC].ZP[0] -= UnitArray [UC].ZP[1];
-						}
-					}
-					break;
-
-			case 100:	X = UnitArray [UC].PosX - 22;
-					Y = UnitArray [UC].PosY - 14;
-			// Num 4
-					if ((UnitArray [UC].PosX < 5) | (UnitArray [UC].PosY < 10) | (op.occupied (X, Y, UnitArray) != -1))
-					{}		// im Feld und nicht besetzt
-					else
-					{	
-						if (UnitArray [UC].ZP[0] >= UnitArray [UC].ZP [1])
-						{
-							UnitArray [UC].PosX = X;
-							UnitArray [UC].PosY = Y;
-							UnitArray [UC].ZP[0] -= UnitArray [UC].ZP[1];
-						}
-					}
-					break;
-
-			case 101:	X = UnitArray [UC].PosX;
-					Y = UnitArray [UC].PosY - 28;
-			// Num 5
-					if ((UnitArray [UC].PosY < 20) | (op.occupied (X, Y, UnitArray) != -1))
-					{}		// im Feld und nicht besetzt
-					else
-					{	
-						if (UnitArray [UC].ZP[0] >= UnitArray [UC].ZP [1])
-						{	
-							UnitArray [UC].PosY = Y;
-							UnitArray [UC].ZP[0] -= UnitArray [UC].ZP[1];
-						}
-					}
-					break;
-
-			case 102:	X = UnitArray [UC].PosX + 22;
-					Y = UnitArray [UC].PosY - 14;
-			// Num 6
-					if ((UnitArray [UC].PosX > 530) | (UnitArray [UC].PosY < 10) | (op.occupied (X, Y, UnitArray) != -1))
-					{}		// im Feld und nicht besetzt
-					else
-					{	
-						if (UnitArray [UC].ZP[0] >= UnitArray [UC].ZP [1])
-						{
-							UnitArray [UC].PosX = X;
-							UnitArray [UC].PosY = Y;
-							UnitArray [UC].ZP[0] -= UnitArray [UC].ZP[1];
-						}
-					}
-					break;
-					
-			case 107:	if (keyNext) {Next ();}		break;	
-			// Plus			--> nächste Einheit
-			
-			case 10:	if (keyEndTurn) {EndTurn ();}	break;
-			// Enter		--> Zug beenden
-		}
 		UnitArray = op.UnitVisibility (UnitArray, P1UnitNum, IsServer);	// Sichtbarkeit
 		newInfo ();							// neue Info
 		send ("Move");						// Bewegung dem Mitspieler senden

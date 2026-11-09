@@ -123,7 +123,13 @@ public class Operations
 /*********** - Schadensberechnung - ***********/
 	public int damage (int distance, int tmpDist, Unit [] UnitArray, int UC)
 	{
-		int percent = (int) (Math.random () * 100);			// der Zufallsgenerator
+		return damage(distance, tmpDist, UnitArray, UC, (int) (Math.random() * 100));
+    }
+
+    /** Explicit roll supports seeded matches without changing the GUI random source. */
+    public int damage(int distance, int tmpDist, Unit[] UnitArray, int UC, int percent)
+    {
+        if (percent < 0 || percent >= 100) throw new IllegalArgumentException("Roll must be 0..99");
 		int damage = 0;	
 				
 		// Die folgende Liste ist Teil der Regeln und wird vielleicht noch modifiziert		

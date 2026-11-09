@@ -7,6 +7,12 @@ public final class I18n {
     private static boolean german;
     private static final Map<String, String> DE = new HashMap<>();
     static {
+        DE.put("Internet IP:", "Internet-IP:");
+        DE.put("Retry", "Erneut");
+        DE.put("Looking up public IP...", "Ermittle Internet-IP...");
+        DE.put("Unavailable - check internet and retry", "Nicht verfuegbar - Internet pruefen");
+        DE.put("Share this IP with your opponent. Forward TCP port 1111.", "Diese IP weitergeben. TCP-Port 1111 im Router freigeben.");
+        DE.put("Public IPv4 provided by api.ipify.org. Select the address to copy it.", "Oeffentliche IPv4 von api.ipify.org. Adresse zum Kopieren markieren.");
         DE.put("Create Game", "Spiel erstellen");
         DE.put("Join Game", "Spiel beitreten");
         DE.put("Keypad Configuration", "Tastenbelegung");

@@ -63,3 +63,22 @@ Defaults (Num Lock enabled): numpad 1/2/3 move down-left/down/down-right;
 numpad 4/5/6 move up-left/up/up-right; numpad + selects the next unit during
 deployment and battle; Enter ends the battle turn. Left-click selects a unit;
 right-click attacks. Chat still uses Enter to send messages.
+
+## Headless battles and Python / reinforcement learning
+
+Compile the headless interface and run the two-bot example (JDK 17+, Python 3.10+;
+no extra libraries):
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build-rl.ps1
+python examples/python/linas_client.py
+```
+
+The example starts a local Java worker, runs seeded matches controlling both players,
+and stops the worker afterwards. The Java engine exposes `reset`, `observe`,
+`legalActions`, `step`, and `matchResult` over a versioned JSON-lines TCP protocol.
+GUI and headless battles share movement and combat rules. Army composition and
+positions can be supplied when resetting; purchasing/deployment training is not yet included.
+
+See [protocol, configuration, Python usage and tests](docs/rl-protocol.md) and
+[the Python client/example](examples/python/linas_client.py).
