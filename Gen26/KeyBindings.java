@@ -66,7 +66,7 @@ public final class KeyBindings {
             root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke(keys[command.ordinal()], 0), name);
             root.getActionMap().put(name, new AbstractAction() {
-                public void actionPerformed(ActionEvent event) { handler.accept(command.code); }
+                public void actionPerformed(ActionEvent event) { handler.accept(commandFor(keys[command.ordinal()])); }
             });
         }
     }

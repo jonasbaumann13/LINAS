@@ -29,23 +29,15 @@ public class linasString
 		s [i] = a;
 	}
 	
-	public int getMaxL ()
-	{
-		int l = 0;
-		for (int i = 0; i < s.length; i++)
-		{
-			if (s[i].length() > l)		l = s[i].length();
-		}
-		return l;
-	}
+
 	
 	public String getMaxS ()
 	{
 		String newS = "";
-		for (int i = 0; i < s.length; i++)
-		{
-			if (s[i].length() > newS.length())		newS = s[i];
-		}
+		for (String value : s)
+        {
+            if (value.length() > newS.length()) newS = value;
+        }
 		return newS;
 	}
 	
@@ -57,8 +49,7 @@ public class linasString
 	public String [] last ()
 	{
 		String [] newS = new String [s.length-1];
-		for (int n = 1; n < s.length; n++)
-		{	newS [n-1] = s [n];}
+		System.arraycopy(s, 1, newS, 0, s.length - 1);
 		return newS;
 	}		
 }

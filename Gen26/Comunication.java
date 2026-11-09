@@ -13,7 +13,7 @@ import java.net.* ;
 
 public class Comunication extends Thread
 {
-	String IP				= "";
+	String IP;
 	String NickS			= "";
 	String NickC			= "";
 	String Command;								// ankommende Befehl
@@ -26,12 +26,12 @@ public class Comunication extends Thread
 	Socket So				= null;
 	ServerSocket SerSo		= null;
 	
-	boolean IsServer		= false;
+	boolean IsServer;
 	int [] DataArr 			= null;
 	int picCount1 			= 0;
 	int picCount2 			= 0;
 	int anzUnitFiles;
-	int xy [] 				= new int [3];		// nur für Koordinaten eines Schusses nötig
+	int[] xy 				= new int [3];		// nur für Koordinaten eines Schusses nötig
 	int whichFrame 			= 0;				// um den Aufbau der Frames zu steuern
 	int [] UnCo 			= new int [1];
 	int x, y;
@@ -76,7 +76,6 @@ public class Comunication extends Thread
 				System.out.println ("\n\n Warte auf Verbindung 1111... \n\n");
 				SerSo 	= new ServerSocket (1111);			
 				So 		= SerSo.accept ();							//Wartet auf einen Client, um Socket zu bekommen
-				if (So!=null)
 				{
 					Out	= new ObjectOutputStream (So.getOutputStream ());
 					In 	= new ObjectInputStream (So.getInputStream ());
@@ -88,7 +87,6 @@ public class Comunication extends Thread
 			{
 				System.out.println ("\n\n Verbindungsaufbau mit " + IP + "...\n\n");
 				So 	= new Socket (IP, 1111);
-				if (So!=null)
 				{
 					Out	= new ObjectOutputStream (So.getOutputStream ());
 					In 	= new ObjectInputStream (So.getInputStream ());
@@ -163,8 +161,8 @@ public class Comunication extends Thread
 								if (basicUnitInfo[picCount1].IsServer)	FIS = new FileInputStream (AppPaths.temporary(basicUnitInfo[picCount1].pictureAS[picCount2]));
 								else																		FIS = new FileInputStream (AppPaths.temporary(basicUnitInfo[picCount1].pictureAC[picCount2]));
 								DataArr = new int [FIS.available()];
-								for (int i0 = 0; i0 < DataArr.length; i0++)
-								{	DataArr [i0] = FIS.read ();}
+								for (int i = 0; i < DataArr.length; i++)
+								{ DataArr[i] = FIS.read(); }
 								FIS.close ();
 								FIS = null;
 								picCount2++;
@@ -192,8 +190,8 @@ public class Comunication extends Thread
 							{	
 								if (basicUnitInfo[picCount1].IsServer)	FOS = new FileOutputStream (AppPaths.temporary(basicUnitInfo[picCount1].pictureAS[picCount2]), true);
 								else																		FOS = new FileOutputStream (AppPaths.temporary(basicUnitInfo[picCount1].pictureAC[picCount2]), true);
-								for (int i = 0; i < DataArr.length; i++)
-								{	FOS.write (DataArr [i]);}
+								for (int element : DataArr)
+								{	FOS.write (element);}
 								picCount2++;
 								FOS.close ();
 								FOS = null;
@@ -270,25 +268,21 @@ public class Comunication extends Thread
 						System.out.println (I18n.text("The enemy runs away!"));// Trost für den, der nun allein dasitzt
 						msg.msgInform (I18n.text("The enemy runs away!"), MFrame);
 						Command = "quit";								// Hier wird das Spiel dann auch beendet
-						sleep (200);						
 					}
 					if (Command.equals ("quit"))						// Beenden des Spieles
 					{
 						MFrame.send ("quit");
-						sleep (200);
 						PFrame.closeStream ();
 						In.close ();
 						MFrame.setVisible (false);
 						System.exit (0);
 					}						
-					sleep (100);
 				}
-				sleep (100);
 			}
 		}
-		catch (IOException e1)				{System.out.println (e1);}
-		catch (ClassNotFoundException e2)	{System.out.println (e2);}
-		catch (Exception e3)				{System.out.println (e3);}
+		catch (Exception failure) {
+            System.getLogger(getClass().getName()).log(System.Logger.Level.ERROR, "Connection failed", failure);
+        }
 	}
 	
 /*********** - Aufbau des jeweils nächsten Frames - ***********/		
@@ -346,6 +340,6 @@ public class Comunication extends Thread
 			Out.writeObject (forSending);								// in OutputStream schreiben
 			Out.flush ();												// alles im OutputStram verschicken
 		}
-		catch (IOException e4)		{System.out.println (e4);}
+		catch (IOException e4)		{System.getLogger(getClass().getName()).log(System.Logger.Level.ERROR, "Operation failed", e4);}
 	}
 }

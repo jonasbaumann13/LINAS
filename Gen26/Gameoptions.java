@@ -10,50 +10,46 @@ import java.net.*;
  *	Server und Client.
  */
 
-public class Gameoptions extends JFrame implements ActionListener
+public final class Gameoptions extends JFrame implements ActionListener
 {
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
 	// Layoutkomponenten
 	JPanel ContentPane;
 	JButton BExit, BStart, BFileAdd, BFileDel, BFileInfo;
 	JLabel[] LA 			= new JLabel[5];
 	ImageIcon IHeading;
 	JTextField TFCredit, TFChat;
-	JList LiUnits;
+	JList<String> LiUnits;
 	JTextArea TAChat;
 	JScrollPane SPChat, SPUnits;
-	DefaultListModel LiMUnits;
-	JCheckBox CBA[] 		= new JCheckBox[1];
-	ExampleFileFilter filter;
+	DefaultListModel<String> LiMUnits;
+	JCheckBox[] CBA 		= new JCheckBox[1];
 	JFileChooser FCUnits;
 	Color CBlue				= Color.blue;
 	Color CBlack 			= Color.black;
 	Color CRed 				= Color.red;
-	Font FTimes				= new Font ("Verdana", 1, 10);
-	Font FGara				= new Font ("Garamond", 1, 14);
-	Font FGaraSmall			= new Font ("Garamond", 1, 10);
+	Font FTimes				= new Font ("Verdana", Font.BOLD, 10);
+	Font FGara				= new Font ("Garamond", Font.BOLD, 14);
+	Font FGaraSmall			= new Font ("Garamond", Font.BOLD, 10);
 		
 	// andere Komponenten
 	boolean [] BoolSend		= new boolean [1];					// Update
 	boolean IsServer;
-	Object [] RefreshInfo	= new Object [6];
-	Object [] ForSending 	= new Object [2];
-	Stack SFile				= new Stack ();
-	Stack StackSend			= new Stack ();						// Update
-	int AnzUnitFiles		= 6;
+	transient Object [] RefreshInfo	= new Object [6];
+	transient Object [] ForSending 	= new Object [2];
+	Stack<File> SFile				= new Stack<> ();
+	Stack<File> StackSend			= new Stack<> ();						// Update
 	int [] IntSend			= new int [1];						// Update
 	int X, Y;
 	String NickC			= "";
 	String NickS			= "";
-	String IP				= "";
-	Socket So;
-	ServerSocket SerSo 		= null;
-	ObjectOutputStream Out 	= null;
-	FileOutputStream FOS 	= null;
-	BufferedInputStream BIS = null;
-	KeyAdapter KA 			= null;
+	transient ObjectOutputStream Out 	= null;
+	transient KeyAdapter KA 			= null;
 	Unit [] BasicUnitInfo;
-	Message Msg;						//Klasse für Fehlermeldungen
-	Operations Op;
+	transient Message Msg;						//Klasse für Fehlermeldungen
+	transient Operations Op;
 	Description Des;
 	
 	
@@ -73,13 +69,13 @@ public class Gameoptions extends JFrame implements ActionListener
 		ContentPane = (JPanel) this.getContentPane ();				ContentPane.setLayout (null);
 		ContentPane.setBackground (new Color (213, 222, 242));		Msg 		= new Message ();
 		CBA[0]		= new JCheckBox (I18n.text("Fog of war"));
-		IHeading	= new ImageIcon (AppPaths.asset("Pics/linasHeaderS.gif"));		LiMUnits	= new DefaultListModel ();
+		IHeading	= new ImageIcon (AppPaths.asset("Pics/linasHeaderS.gif"));		LiMUnits	= new DefaultListModel<> ();
 		BExit 		= new JButton (I18n.text("Exit"));							ContentPane.add (BExit);
 		BStart 		= new JButton (I18n.text("Accept"));						ContentPane.add (BStart);
 		TFCredit	= new JTextField (10);							ContentPane.add (TFCredit);
 		TFChat		= new JTextField (100);							ContentPane.add (TFChat);
 		TAChat		= new JTextArea ();
-		LiUnits		= new JList (LiMUnits);
+		LiUnits		= new JList<> (LiMUnits);
 		SPChat		= new JScrollPane (TAChat);						ContentPane.add (SPChat);
 		SPUnits		= new JScrollPane (LiUnits);					ContentPane.add (SPUnits);
 		BFileAdd	= new JButton (I18n.text("Add"));			if (IsServer)	ContentPane.add (BFileAdd);
@@ -103,18 +99,18 @@ public class Gameoptions extends JFrame implements ActionListener
 			ContentPane.add (LA[l]);			
 		}
 		
-		for (int c = 0; c < CBA.length; c++)
+		for (JCheckBox checkbox : CBA)
 		{
-			CBA[c].setFont (FGara);
-			CBA[c].setForeground (CBlack);
-			ContentPane.add (CBA[c]);			
+			checkbox.setFont (FGara);
+			checkbox.setForeground (CBlack);
+			ContentPane.add (checkbox);
 		}
 		
 		LA[1].setText (I18n.text("Credits available"));
 		LA[2].setText (I18n.text("Units for this game:"));
 		LA[3].setForeground (CBlue);
 		LA[4].setForeground (CRed);
-		LA[4].setHorizontalAlignment (LA[4].RIGHT);
+		LA[4].setHorizontalAlignment (JLabel.RIGHT);
 		
 		
 		TAChat.setLineWrap (true);
@@ -122,10 +118,10 @@ public class Gameoptions extends JFrame implements ActionListener
 		TAChat.setEditable (false);
 		TAChat.setFocusable (false);
 		TAChat.setForeground (CBlack);
-		SPChat.setVerticalScrollBarPolicy(SPChat.VERTICAL_SCROLLBAR_AS_NEEDED);
-		SPChat.setHorizontalScrollBarPolicy(SPChat.HORIZONTAL_SCROLLBAR_NEVER);
-		SPUnits.setVerticalScrollBarPolicy(SPUnits.VERTICAL_SCROLLBAR_AS_NEEDED);
-		SPUnits.setHorizontalScrollBarPolicy(SPUnits.HORIZONTAL_SCROLLBAR_NEVER);
+		SPChat.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		SPChat.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		SPUnits.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		SPUnits.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
 		BExit.setFocusable (false);
 		BStart.setFocusable (false);
@@ -155,8 +151,6 @@ public class Gameoptions extends JFrame implements ActionListener
 		
 		TFChat.addKeyListener (KA = new KeyAdapter ()
 		{
-			public void keyReleased (KeyEvent e)	{}
-			public void keyTyped (KeyEvent e)		{}
 			public void keyPressed (KeyEvent e)
 			{	
 				if (e.getKeyCode () == 10)		
@@ -172,7 +166,7 @@ public class Gameoptions extends JFrame implements ActionListener
 		{
 			addHostAddress();
 			BStart.setEnabled (false);
-			BStart.setLabel (I18n.text("Waiting"));
+			BStart.setText (I18n.text("Waiting"));
 			LA[3].setText (NickS);
 		}
 		else
@@ -200,7 +194,7 @@ public class Gameoptions extends JFrame implements ActionListener
         hint.setBounds(10, 440, 535, 25);
         ContentPane.add(hint);
         address.setToolTipText(I18n.text("Public IPv4 provided by api.ipify.org. Select the address to copy it."));
-        retry.addActionListener(event -> lookupHostAddress(address, retry));
+        retry.addActionListener(ignored -> lookupHostAddress(address, retry));
         lookupHostAddress(address, retry);
     }
 
@@ -210,7 +204,7 @@ public class Gameoptions extends JFrame implements ActionListener
         new SwingWorker<String, Void>() {
             protected String doInBackground() throws Exception {
                 HttpURLConnection connection = (HttpURLConnection)
-                    new URL("https://api.ipify.org").openConnection();
+                    URI.create("https://api.ipify.org").toURL().openConnection();
                 connection.setConnectTimeout(5000);
                 connection.setReadTimeout(5000);
                 connection.setInstanceFollowRedirects(false);
@@ -333,7 +327,7 @@ public class Gameoptions extends JFrame implements ActionListener
 		int tmp = LiUnits.getSelectedIndex ();
 		if (tmp != -1)
 		{
-			Object OTmp = SFile.remove (tmp);
+			SFile.remove (tmp);
 			LiMUnits.remove (tmp);
 		}
 	}
@@ -347,7 +341,7 @@ public class Gameoptions extends JFrame implements ActionListener
 		LiMUnits.clear();		
 		while (!SFile.isEmpty())
 		{
-			FTmp = (File) SFile.pop();
+			FTmp = SFile.pop();
 			LiMUnits.addElement (FTmp.getName());
 		}
 	}
@@ -387,7 +381,7 @@ public class Gameoptions extends JFrame implements ActionListener
 		if (!IsServer)		send ("ClientAccepts", "");
 		else
 		{	
-			if ((TFCredit.getText().equals(""))||((int)Integer.valueOf(TFCredit.getText()).intValue()==0))
+			if ((TFCredit.getText().isEmpty())||(Integer.parseInt(TFCredit.getText())==0))
 			{	Msg.msgError (I18n.text("Please enter a number for the available credits."), this);}
 			else 
 			{
@@ -403,16 +397,12 @@ public class Gameoptions extends JFrame implements ActionListener
 	public void clientAccepts ()
 	{
 		BStart.setEnabled (true);
-		BStart.setLabel (I18n.text("Start"));
+		BStart.setText (I18n.text("Start"));
 	}
-		
-		
-/*********** - kopiert die gebrauchten Einheiten in einen tmp Ordner (in construction!!!) - ***********/
-	
-	public void copyUnitFiles ()
-	{
-		
-	}
+
+
+
+
 	
 	
 /*********** - gibt dem Client die Einstellungsaenderungen (nur Server) - ***********/
@@ -422,8 +412,8 @@ public class Gameoptions extends JFrame implements ActionListener
 		if ((Out != null)&&(IsServer))
 		{
 			BoolSend [0] 	= CBA [0].isSelected();
-			if (TFCredit.getText().equals(""))	IntSend [0] = 0;
-			else								IntSend [0] = (int) Integer.valueOf(TFCredit.getText()).intValue();
+			if (TFCredit.getText().isEmpty())	IntSend [0] = 0;
+			else								IntSend [0] = Integer.parseInt(TFCredit.getText());
 			StackSend		= SFile;
 	
 			send ("sendSettings", "");
@@ -440,7 +430,9 @@ public class Gameoptions extends JFrame implements ActionListener
 		IntSend 	= (int []) Refresh[1];
 		CBA [0].setSelected(BoolSend[0]);
 		TFCredit.setText("" + IntSend[0]);
-		SFile = Op.reverse ((Stack) Refresh[2]);
+		Stack<File> receivedFiles = new Stack<>();
+        for (Object file : (Stack<?>) Refresh[2]) receivedFiles.add((File) file);
+        SFile = Op.reverse(receivedFiles);
 		setFileList ();
 	}
 	
@@ -449,8 +441,7 @@ public class Gameoptions extends JFrame implements ActionListener
 
 	public int getCredits ()
 	{
-		int credit = (int) Integer.valueOf(TFCredit.getText()).intValue();
-		return credit;
+		return Integer.parseInt(TFCredit.getText());
 	}
 	
 /*********** - gibt den Nick zurueck - ***********/
@@ -498,26 +489,26 @@ public class Gameoptions extends JFrame implements ActionListener
 	
 	public void send (String Command, String Message)
 	{
-		ForSending [0] = (Object) Command;
-		ForSending [1] = (Object) Message;
+		ForSending [0] = Command;
+		ForSending [1] = Message;
 		
 		if (Command.equals ("sendSettings"))
 		{
-			RefreshInfo [0] = (Object) BoolSend;
-			RefreshInfo [1] = (Object) IntSend;
-			RefreshInfo [2] = (Object) StackSend;
+			RefreshInfo [0] = BoolSend;
+			RefreshInfo [1] = IntSend;
+			RefreshInfo [2] = StackSend;
 			
-			ForSending [1] = (Object) RefreshInfo;
+			ForSending [1] = RefreshInfo;
 		}
-		
-		if (Command.equals ("ServerAccepts"))	ForSending [1] = (Object) BasicUnitInfo;
+
+		if (Command.equals ("ServerAccepts"))	ForSending [1] = BasicUnitInfo;
 		
 		try
 		{	
 			Out.reset ();							// damit vorhandene Daten im OutputStream erst gelöscht und nicht mitgesendet werden
-			Out.writeObject ((Object) ForSending);	// in OutputStream schreiben
+			Out.writeObject (ForSending);	// in OutputStream schreiben
 			Out.flush ();							// alles im OutputStram verschicken
 		}
-		catch (IOException e2)		{System.out.println (e2);}
+		catch (IOException e2)		{System.getLogger(getClass().getName()).log(System.Logger.Level.ERROR, "Operation failed", e2);}
 	}
 }

@@ -9,8 +9,11 @@ import java.net.*;
  * Dazu setzen die Spieler am Anfang ihre Einheiten auf ihre Seite des Spielfeldes.
  */
 
-public class SetFrame extends JFrame implements ActionListener, MouseListener
+public final class SetFrame extends JFrame implements ActionListener, MouseListener
 {
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
 	//Layoutkomponenten
 	JPanel contentPane;
 	ImageIcon iHeading;
@@ -24,27 +27,24 @@ public class SetFrame extends JFrame implements ActionListener, MouseListener
 	Color cBlue 	= new Color (41, 41, 255);
 	Color C 		= Color.black;
 	Color CExit 	= Color.red;
-	Font F 			= new Font ("Garamond", 1, 14);
-	Font fPlayer 	= new Font ("Verdana", 1, 16);
+	Font F 			= new Font ("Garamond", Font.BOLD, 14);
+	Font fPlayer 	= new Font ("Verdana", Font.BOLD, 16);
 	
 	//andere Komponenten
-	KeyAdapter KA 			= null;
-	MouseAdapter MA			= null;
 	String [] Player 		= new String [2];		// Name der beiden Spieler
-	ObjectOutputStream Out 	= null;					// Ausgabestrom
-	Object [] forSending 	= new Object [2];		// Objekt, welches bei Bedarf gesendet wird
+	transient ObjectOutputStream Out;					// Ausgabestrom
+	transient Object [] forSending 	= new Object [2];		// Objekt, welches bei Bedarf gesendet wird
 	int UC;											// (unit-counter) um zu Ermitteln, welche Einheit gerade dran ist
-	int MouseX, MouseY;								// Maus-Koordinaten + Anzahl der noch zu setzenden Einheiten
 	int [] num 				= {0, 0, 0, 0, 0, 0};
 	int P1UnitNum;									// Gesammtanzahl der Einheiten von Spieler 1 (Client!)
 	int P2UnitNum;									// Gesammtanzahl der Einheiten von Spieler 2 (Server!)
 	int anzUnitFiles;
 	boolean turn 			= true;					// Ob gerade am Zug oder nicht
 	boolean IsServer;
-	Unit [] UnitArray, tmpUA;						// Einheitenfeld
+	Unit [] UnitArray;						// Einheitenfeld
 	Unit [] BspU;
-	Operations op;									// Methodensammlung
-	Message msg;									// Fehlerausgabe
+	transient Operations op;									// Methodensammlung
+	transient Message msg;									// Fehlerausgabe
 
 /*********** - Layoutaufbau im Constructor und spezifische Starteinstellungen - ***********/	
 
@@ -147,7 +147,7 @@ public class SetFrame extends JFrame implements ActionListener, MouseListener
 			UC = 0;
 			JLA [4].setText (UnitArray [UC].getDisplayName() + " (" + UnitArray [UC].DamType + ")");
 			Brett.newBoard (1);							// spezifische erlaubte Felder, auf die er setzen kann
-			bReady.setLabel (I18n.text("Ready"));
+			bReady.setText (I18n.text("Ready"));
 			JLA [2].setText (Player [0]);				// (seine Einheiten gehen im Feld von 0 bis P1UnitNum!)
 		}
 		if (IsServer)						// nur für Server
@@ -156,14 +156,14 @@ public class SetFrame extends JFrame implements ActionListener, MouseListener
 			turn 	= false;							// nicht am Zug
 			JLA [4].setText (UnitArray [P2UnitNum].getDisplayName() + " (" + UnitArray [UC].DamType + ")");
 			Brett.newBoard (2);							// spezifische erlaubte Felder, auf die er setzen kann
-			bReady.setLabel (I18n.text("Waiting for client"));
+			bReady.setText (I18n.text("Waiting for client"));
 			JLA [2].setText (Player [1]);
 		}
 		numStart ();
 		
 		
 		//******KeyListener******\\
-        KeyBindings.install(getRootPane(), true, command -> Next());
+        KeyBindings.install(getRootPane(), true, ignored -> Next());
 	}
 
 /*********** - Reaktion auf Buttonklicks - ***********/		
@@ -198,7 +198,7 @@ public class SetFrame extends JFrame implements ActionListener, MouseListener
 			{	UC = 0;}
 			if (IsServer && (UC >= (UnitArray.length)))
 			{	UC = P1UnitNum;}
-		}	while ((UnitArray [UC].visible == true) && (tmp < (UnitArray.length)));
+		}	while ((UnitArray [UC].visible) && (tmp < (UnitArray.length)));
 														// bis Einheit gefunden, die noch nicht gesetzt wurde
 		JLA [4].setText (UnitArray [UC].getDisplayName() + " (" + UnitArray [UC].DamType + ")");
 		Brett.setzen (UnitArray, UC);					// Einheiten auch graphisch setzen
@@ -208,8 +208,8 @@ public class SetFrame extends JFrame implements ActionListener, MouseListener
 	
 	public void mousePressed (MouseEvent e)				
 	{
-		boolean ready 	= true;							// ob alle gesetzt wurden
-		int [] xy 		= new int [3];				
+		boolean ready;							// ob alle gesetzt wurden
+		int [] xy;
 
 		if ((e.getX() < 572) && (e.getY() < 565))		// im Spielfeld
 		{
@@ -306,7 +306,7 @@ public class SetFrame extends JFrame implements ActionListener, MouseListener
 	
 	public void numMod ()
 	{
-		if (UnitArray [UC].visible == false)
+		if (!UnitArray [UC].visible)
 		{
 			for (int i = 0; i < anzUnitFiles; i++)
 			{
@@ -346,7 +346,7 @@ public class SetFrame extends JFrame implements ActionListener, MouseListener
 	public void ClientReady (Unit [] UA)
 	{
 		UnitArray = op.ModUnitArray (UnitArray, UA, P1UnitNum);		// Server-Feld bekommt Daten des Client-Feldes
-		bReady.setLabel (I18n.text("Start game"));
+		bReady.setText (I18n.text("Start game"));
 		turn = true;
 		boolean ready = op.setAll (UnitArray, P1UnitNum, IsServer);		// Test, ob Server schon alle gesetzt hat
 		if (ready)
@@ -357,14 +357,14 @@ public class SetFrame extends JFrame implements ActionListener, MouseListener
 	
 	public void send (String Command)
 	{
-		forSending [0] = (Object) Command;
-		forSending [1] = (Object) UnitArray;
+		forSending [0] = Command;
+		forSending [1] = UnitArray;
 		try
 		{	
 			Out.reset ();								// damit vorhandene Daten im OutputStream erst gelöscht und nicht mitgesendet werden
-			Out.writeObject ((Object) forSending);		// in OutputStream schreiben
+			Out.writeObject (forSending);		// in OutputStream schreiben
 			Out.flush ();								// alles im OutputStram verschicken
 		}
-		catch (IOException e2)		{System.out.println (e2);}
+		catch (IOException e2)		{System.getLogger(getClass().getName()).log(System.Logger.Level.ERROR, "Operation failed", e2);}
 	}
 }

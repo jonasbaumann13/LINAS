@@ -59,6 +59,38 @@ public class HeadlessBattleTest {
         check(!BattleRules.fire(op, new Unit[] {attacker}, 1, 0, 220, 322, () -> 99), "Minimum range or AP rejection");
         check(attacker.ZP[0] == points, "Rejected fire preserves points");
     }
+    private static void cloning() throws Exception {
+        for (var entry : HeadlessBattle.unitFiles().values()) {
+            Unit original = new Operations().setUnit(entry.toFile(), "test", false);
+            Unit copy = (Unit) original.clone();
+            for (var field : Unit.class.getFields()) {
+                Object source = field.get(original), cloned = field.get(copy);
+                if (source == null || !source.getClass().isArray()) continue;
+                check(source != cloned, "Independent cloned array: " + field.getName());
+                check(Objects.deepEquals(source, cloned), "Cloned array contents: " + field.getName());
+                if (source.getClass().getComponentType().isArray()) {
+                    for (int row = 0; row < java.lang.reflect.Array.getLength(source); row++)
+                        check(java.lang.reflect.Array.get(source, row) != java.lang.reflect.Array.get(cloned, row),
+                            "Independent cloned row: " + field.getName());
+                }
+            }
+        }
+        check(java.io.ObjectStreamClass.lookup(Unit.class).getSerialVersionUID() == 8456601742033046694L,
+            "Preserve existing multiplayer serialization ID");
+    }
+    private static void mutualElimination() throws Exception {
+        HeadlessBattle battle = new HeadlessBattle(1, Map.of());
+        // Arrange the post-combat state where both armies were destroyed in one action.
+        var field = HeadlessBattle.class.getDeclaredField("units");
+        field.setAccessible(true);
+        for (Unit unit : (Unit[]) field.get(battle)) unit.TP = 0;
+        battle.step(Map.of("type", "end_turn"));
+        Map<String, Object> result = battle.result();
+        check(Boolean.TRUE.equals(result.get("terminated")), "Mutual elimination ends the match");
+        check(result.get("winner") == null, "Mutual elimination has no winner");
+        check(result.get("reason").equals("mutual_elimination"), "Mutual elimination reason");
+        check(result.get("payoffs").equals(List.of(0, 0)), "Mutual elimination is a draw");
+    }
     private static void json() {
         String source = "{\"a\":[1,true,null,\"line\\n\\u00e4\"],\"b\":-23}";
         check(RlJson.encode(RlJson.parse(source)).contains("line"), "JSON round trip");
@@ -68,8 +100,8 @@ public class HeadlessBattleTest {
         }
         check(RlJson.integer(RlJson.parse("9223372036854775807")) == Long.MAX_VALUE, "Exact 64-bit seeds");
     }
-    public static void main(String[] args) {
-        movement(); combat(); json();
-        System.out.println("HeadlessBattleTest passed: 3120 movement cases, combat, damage stages, splash, JSON");
+    public static void main(String[] args) throws Exception {
+        movement(); combat(); cloning(); mutualElimination(); json();
+        System.out.println("HeadlessBattleTest passed: 3120 movement cases, combat, damage stages, splash, cloning, mutual elimination, JSON");
     }
 }

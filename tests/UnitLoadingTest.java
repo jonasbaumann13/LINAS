@@ -10,6 +10,8 @@ public class UnitLoadingTest {
     }
 
     private static class ApprovedChooser extends JFileChooser {
+        @java.io.Serial
+        private static final long serialVersionUID = 1L;
         private final File selection;
 
         ApprovedChooser(File selection) {

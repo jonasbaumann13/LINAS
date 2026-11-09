@@ -16,7 +16,7 @@ public final class RlServer {
             System.out.println(RlJson.encode(RlJson.object("event", "ready", "version", VERSION,
                 "host", "127.0.0.1", "port", server.getLocalPort())));
             System.out.flush();
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
                 try (Socket socket = server.accept()) {
                     socket.setTcpNoDelay(true);
                     serve(socket);
@@ -32,7 +32,7 @@ public final class RlServer {
             if (line.length() >= 65536) throw new IOException("Request exceeds 65536 characters");
             line.append((char) c);
         }
-        if (line.length() != 0) throw new IOException("Incomplete JSON line");
+        if (!line.isEmpty()) throw new IOException("Incomplete JSON line");
         return null;
     }
     private static void fields(Map<String, Object> values, String... allowed) {
@@ -68,9 +68,8 @@ public final class RlServer {
                     case "reset":
                         fields(params, "seed", "config");
                         // Construct first: a failed reset leaves the current match intact.
-                        HeadlessBattle replacement = new HeadlessBattle(RlJson.integer(params.getOrDefault("seed", 0)),
+                        battle = new HeadlessBattle(RlJson.integer(params.getOrDefault("seed", 0)),
                             RlJson.asObject(params.getOrDefault("config", RlJson.object())));
-                        battle = replacement;
                         result = battle.view(); break;
                     case "observe":
                         fields(params, "player");

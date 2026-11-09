@@ -12,8 +12,11 @@ import java.net.*;
  * enthält
  */
 
-public class PrepareFrame extends JFrame implements ActionListener
+public final class PrepareFrame extends JFrame implements ActionListener
 {
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
 	//Layoutkomponenten
 	JPanel contentPane;
 	JLabel [] lNumberU;
@@ -24,30 +27,29 @@ public class PrepareFrame extends JFrame implements ActionListener
 	JButton [] bNumberU;
 	ImageIcon [] iPicU;
 	ImageIcon iHeading, iArrayT, iArrayB;
-	Cursor curDef 			= new Cursor (DEFAULT_CURSOR);
-	Cursor curHan 			= new Cursor (HAND_CURSOR);
+	Cursor curDef 			= new Cursor (Cursor.DEFAULT_CURSOR);
+	Cursor curHan 			= new Cursor (Cursor.HAND_CURSOR);
 	Color C 				= Color.black;
 	Color CExit 			= Color.red;
 	Color CBlue 			= new Color (41, 41, 255);
-	Font F 					= new Font ("Garamond", 1, 14);
-	Font FP 				= new Font ("Verdana", 1, 16);
+	Font F 					= new Font ("Garamond", Font.BOLD, 14);
+	Font FP 				= new Font ("Verdana", Font.BOLD, 16);
 	
 	//andere Komponenten
-	KeyAdapter KA 			= null;
-	MouseAdapter [] MA;
-	String nick 			= "";					// Name des Spielers und ob Server oder Client
-	ObjectOutputStream Out 	= null;
-	Object [] forSending 	= new Object [2];		// Objekt, welches bei Bedarf gesendet wird
-	int anzUnitFiles 		= 0;
+	transient MouseAdapter [] MA;
+	String nick;					// Name des Spielers und ob Server oder Client
+	transient ObjectOutputStream Out;
+	transient Object [] forSending 	= new Object [2];		// Objekt, welches bei Bedarf gesendet wird
+	int anzUnitFiles;
 	int credits;									// Anzahl der Punkte um Einheiten zu "kaufen"
 	int UnitNum 			= 0;					// Anzahl der Einheiten eines Spielers
-	int [] Num 				= {0, 0, 0, 0, 0, 0};	// Anzahl der Einheiten (Panzer, Artillerie, Aufklärer, TeamAT, TeamMörser, TeamMG)
+	int [] Num;	// Anzahl der Einheiten (Panzer, Artillerie, Aufklärer, TeamAT, TeamMörser, TeamMG)
 	boolean IsServer;
 
 	Unit [] BspU;
 	Unit [] UnitArray, tmpUA;						// tmpUA ist für das spätere zusammenschließen der beiden Felder (von Spieler 1 und 2)
-	Message msg;									// Klasse für Fehlermeldungen
-	Operations op;									// Methodensammlung
+	transient Message msg;									// Klasse für Fehlermeldungen
+	transient Operations op;									// Methodensammlung
 	Description lD;
 	
 
@@ -114,7 +116,7 @@ public class PrepareFrame extends JFrame implements ActionListener
 	//******Koordinaten der Objekte******\\
 		int y = 165;
 		int x = 20;
-		for (int l1 = 0; l1 < ((int)anzUnitFiles/2); l1++)
+		for (int l1 = 0; l1 < (anzUnitFiles/2); l1++)
 		{
 			lU [l1].setBounds (x, y, 150, 20);
 			lPicU [l1].setBounds ((x+145), (y-3), 30, 30);
@@ -126,7 +128,7 @@ public class PrepareFrame extends JFrame implements ActionListener
 		
 		y = 165;
 		x = 315;
-		for (int l2 = ((int)anzUnitFiles/2); l2 < anzUnitFiles; l2++)
+		for (int l2 = (anzUnitFiles/2); l2 < anzUnitFiles; l2++)
 		{
 			lU [l2].setBounds (x, y, 150, 20);
 			lPicU [l2].setBounds ((x+145), (y-3), 30, 30);
@@ -166,10 +168,10 @@ public class PrepareFrame extends JFrame implements ActionListener
 		{	bNumberU [o].addActionListener (this);}
 						
 	//******Spezifische Anfangseinstellungen******\\
-		if (!IsServer)	bStart.setLabel (I18n.text("Accept"));
+		if (!IsServer)	bStart.setText (I18n.text("Accept"));
 		if (IsServer)	
 		{
-			bStart.setLabel (I18n.text("Waiting for client"));
+			bStart.setText (I18n.text("Waiting for client"));
 			bStart.setEnabled (false);
 		}
 		
@@ -275,11 +277,11 @@ public class PrepareFrame extends JFrame implements ActionListener
 		createArray (0);									// Einheiten-Feld erstellen
 		send ("ClientReady");
 		
-		for (int j = 0; j < bNumberU.length; j++)
-		{	bNumberU [j].setEnabled (false);}
+		for (JButton element : bNumberU)
+		{	element.setEnabled (false);}
 		
 		bStart.setEnabled (false);
-		bStart.setLabel (I18n.text("Waiting for host"));
+		bStart.setText (I18n.text("Waiting for host"));
 	}
 
 /*********** - Bescheid, dass Client fertig ist - ***********/		
@@ -287,7 +289,7 @@ public class PrepareFrame extends JFrame implements ActionListener
 	public void ClientReady (Unit [] UA)
 	{
 		tmpUA = UA;											// Einheiten-Feld vom Client
-		bStart.setLabel (I18n.text("Start game"));
+		bStart.setText (I18n.text("Start game"));
 		bStart.setEnabled (true);
 	}
 	
@@ -322,15 +324,7 @@ public class PrepareFrame extends JFrame implements ActionListener
 	
 	public void addArray ()
 	{
-		for (int i = 0; i < tmpUA.length; i++)
-		{	UnitArray [i] = tmpUA [i];}
-	}
-	
-/*********** - Einheiten-Feld ersetzen (erneuern) - ***********/	
-
-	public void setUnitArray (Unit [] UA)
-	{
-		UnitArray = UA;
+		System.arraycopy(tmpUA, 0, UnitArray, 0, tmpUA.length);
 	}
 	
 /*********** - gibt das Beispielfeld zurueck - ***********/	
@@ -344,15 +338,15 @@ public class PrepareFrame extends JFrame implements ActionListener
 	
 	public void send (String Command)
 	{
-		forSending [0] = (Object) Command;
-		forSending [1] = (Object) UnitArray;
+		forSending [0] = Command;
+		forSending [1] = UnitArray;
 		try
 		{	
 			Out.reset ();								// damit vorhandene Daten im OutputStream erst gelöscht und nicht mitgesendet werden
-			Out.writeObject ((Object) forSending);		// in OutputStream schreiben
+			Out.writeObject (forSending);		// in OutputStream schreiben
 			Out.flush ();								// alles im OutputStram verschicken
 		}
-		catch (IOException e2)		{System.out.println (e2);}
+		catch (IOException e2)		{System.getLogger(getClass().getName()).log(System.Logger.Level.ERROR, "Operation failed", e2);}
 	}
 	
 /*********** - Ausgabestrom schließen - ***********/
@@ -360,6 +354,6 @@ public class PrepareFrame extends JFrame implements ActionListener
 	public void closeStream ()
 	{
 		try	{Out.close ();}
-		catch (IOException e3)		{System.out.println (e3);}
+		catch (IOException e3)		{System.getLogger(getClass().getName()).log(System.Logger.Level.ERROR, "Operation failed", e3);}
 	}
 }

@@ -18,12 +18,7 @@ public class Operations
 /*********** - Ob Zahl gerade ist - ***********/	
 	public boolean even (int tmp)
 	{
-		boolean even = true;
-
-		if ((tmp % 2) == 1)
-		{	even = false;}
-
-		return even;
+        return (tmp % 2) != 1;
 	}
 
 /*********** - Umrechnung von Pixelkoordinaten zu Feldkoordinaten - ***********/	
@@ -120,97 +115,50 @@ public class Operations
 		return rwMod;
 	}
 	
-/*********** - Schadensberechnung - ***********/
-	public int damage (int distance, int tmpDist, Unit [] UnitArray, int UC)
-	{
-		return damage(distance, tmpDist, UnitArray, UC, (int) (Math.random() * 100));
-    }
+
 
     /** Explicit roll supports seeded matches without changing the GUI random source. */
-    public int damage(int distance, int tmpDist, Unit[] UnitArray, int UC, int percent)
+    public int damage(int tmpDist, Unit[] UnitArray, int UC, int percent)
     {
         if (percent < 0 || percent >= 100) throw new IllegalArgumentException("Roll must be 0..99");
-		int damage = 0;	
-				
-		// Die folgende Liste ist Teil der Regeln und wird vielleicht noch modifiziert		
-		if (percent == 100)
-		{	damage = UnitArray [UC].Dam * 2;}
-						
-		if ((percent < 100) && (percent > 95))
-		{	
-			switch (tmpDist)
-			{
-				case 1:	damage = UnitArray [UC].Dam;				break;
-				case 2: damage = UnitArray [UC].Dam;				break;
-				case 3: damage = UnitArray [UC].Dam;				break;
-				case 4: damage = UnitArray [UC].Dam;				break;
-				case 5: damage = (int) (UnitArray [UC].Dam * 0.75);	break;
-			}
-		}
-
-		if ((percent < 96) && (percent > 75))
-		{
-			switch (tmpDist)
-			{
-				case 1:	damage = UnitArray [UC].Dam;				break;
-				case 2: damage = UnitArray [UC].Dam;				break;
-				case 3: damage = UnitArray [UC].Dam;				break;
-				case 4: damage = (int) (UnitArray [UC].Dam * 0.75);	break;
-				case 5: damage = (int) (UnitArray [UC].Dam * 0.50);	break;
-			}
-		}
-			
-		if ((percent < 76) && (percent > 50))
-		{
-			switch (tmpDist)
-			{
-				case 1:	damage = UnitArray [UC].Dam;				break;
-				case 2: damage = UnitArray [UC].Dam;				break;
-				case 3: damage = (int) (UnitArray [UC].Dam * 0.75);	break;
-				case 4: damage = (int) (UnitArray [UC].Dam * 0.5);	break;
-				case 5: damage = (int) (UnitArray [UC].Dam * 0.25);	break;
-			}
-		}	
-			
-		if ((percent < 51) && (percent > 25))
-		{	
-			switch (tmpDist)
-			{
-				case 1:	damage = UnitArray [UC].Dam;				break;
-				case 2: damage = (int) (UnitArray [UC].Dam * 0.75);	break;
-				case 3: damage = (int) (UnitArray [UC].Dam * 0.5);	break;
-				case 4: damage = (int) (UnitArray [UC].Dam * 0.25);	break;
-				case 5: damage = 0;									break;
-			}
-		}
-		
-		if ((percent < 26) && (percent > 5))
-		{	
-			switch (tmpDist)
-			{
-				case 1:	damage = (int) (UnitArray [UC].Dam * 0.75);	break;
-				case 2: damage = (int) (UnitArray [UC].Dam * 0.5);	break;
-				case 3: damage = (int) (UnitArray [UC].Dam * 0.25);	break;
-				case 4: damage = 0;									break;
-				case 5: damage = 0;									break;
-			}
-		}
-		
-		if ((percent < 6) && (percent > 0))
-		{	
-			switch (tmpDist)
-			{
-				case 1:	damage = (int) (UnitArray [UC].Dam * 0.50);	break;
-				case 2: damage = (int) (UnitArray [UC].Dam * 0.25);	break;
-				case 3: damage = 0;									break;
-				case 4: damage = 0;									break;
-				case 5: damage = 0;									break;
-			}
-		}
-			
-		if (percent == 0)	{damage = 0;}
-		
-		return damage;
+        int damage = UnitArray[UC].Dam;
+        if (percent > 95) return switch (tmpDist) {
+            case 1, 2, 3, 4 -> damage;
+            case 5 -> (int) (damage * 0.75);
+            default -> 0;
+        };
+        if (percent > 75) return switch (tmpDist) {
+            case 1, 2, 3 -> damage;
+            case 4 -> (int) (damage * 0.75);
+            case 5 -> (int) (damage * 0.50);
+            default -> 0;
+        };
+        if (percent > 50) return switch (tmpDist) {
+            case 1, 2 -> damage;
+            case 3 -> (int) (damage * 0.75);
+            case 4 -> (int) (damage * 0.50);
+            case 5 -> (int) (damage * 0.25);
+            default -> 0;
+        };
+        if (percent > 25) return switch (tmpDist) {
+            case 1 -> damage;
+            case 2 -> (int) (damage * 0.75);
+            case 3 -> (int) (damage * 0.50);
+            case 4 -> (int) (damage * 0.25);
+            default -> 0;
+        };
+        if (percent > 5) return switch (tmpDist) {
+            case 1 -> (int) (damage * 0.75);
+            case 2 -> (int) (damage * 0.50);
+            case 3 -> (int) (damage * 0.25);
+            default -> 0;
+        };
+        if (percent > 0) return switch (tmpDist) {
+            case 1 -> (int) (damage * 0.50);
+            case 2 -> (int) (damage * 0.25);
+            default -> 0;
+        };
+        return 0;
 	}
 	
 /*********** - Einflussnahme von Ruestung auf den Schaden - ***********/	
@@ -241,7 +189,7 @@ public class Operations
 	}
 	
 /*********** - Modifikation der Standardwerte in Abhängigkeit zu den Trefferpunkten - ***********/	
-	public Unit [] DamMod (Unit [] UnitArray, int UC, int P1UnitNum)
+	public void DamMod (Unit [] UnitArray, int UC)
 	{
 		int dMod = 0;
 		for (int i = 0; i < 4; i++)
@@ -267,8 +215,7 @@ public class Operations
 		UnitArray [UC].ZP[1] 			= 	UnitArray [UC].zpA[dMod][1];
 		UnitArray [UC].ZP[2] 			= 	UnitArray [UC].zpA[dMod][2];
 		
-		for (int r = 0; r < UnitArray [UC].rwTypeA[dMod].length; r++)
-		{	UnitArray [UC].RWtype [r] = UnitArray [UC].rwTypeA[dMod][r];}
+        System.arraycopy(UnitArray[UC].rwTypeA[dMod], 0, UnitArray[UC].RWtype, 0, UnitArray[UC].rwTypeA[dMod].length);
 		
 		if (UnitArray [UC].ZP[0] > UnitArray [UC].basicZP)	
 		{	UnitArray [UC].ZP[0] = UnitArray [UC].basicZP;}
@@ -285,22 +232,21 @@ public class Operations
 			UnitArray [UC].ZP[2] = 99;
 			UnitArray [UC].sight = -1;
 		}
-		return UnitArray;
 	}
 	
 /*********** - Auffüllen der Zugpunkte - ***********/	
 	public Unit [] newRound (Unit [] UnitArray)
 	{
-		for (int i = 0; i < UnitArray.length; i++)
-		{	UnitArray [i].ZP[0] = UnitArray [i].basicZP;}
+		for (Unit element : UnitArray)
+		{	element.ZP[0] = element.basicZP;}
 		return UnitArray;
 	}
 	
 /*********** - Sichtbarkeit jeder Einheit - ***********/	
 	public Unit [] UnitVisibility (Unit [] UnitArray, int P1UnitNum, boolean IsServer)
 	{
-		for (int l = 0; l < UnitArray.length; l++)
-		{	UnitArray [l].visible = PointVisibility (UnitArray, P1UnitNum, IsServer, UnitArray [l].PosX, UnitArray [l].PosY, UnitArray [l].camouflage);}
+		for (Unit element : UnitArray)
+		{	element.visible = PointVisibility (UnitArray, P1UnitNum, IsServer, element.PosX, element.PosY, element.camouflage);}
 
 		return UnitArray;
 	}
@@ -316,8 +262,6 @@ public class Operations
 			for (int i1 = 0; i1 < P1UnitNum; i1++)
 			{
 				sightMod = UnitArray [i1].sight - camouflage;
-				if (UnitArray [i1].sight <= 0)
-				if ((sightMod < 1)&&(UnitArray [i1].sight > 0))	sightMod = 1;
 				distance = distance (x, y, UnitArray, i1);
 				if (distance <= sightMod)
 				{	tmpVisible = true;}
@@ -378,8 +322,8 @@ public class Operations
 /*********** - Aufdecken des Spielfeldes, indem jede Einheit hohe Sichtweite bekommt - ***********/	
 	public Unit [] seeAll (Unit [] UnitArray)
 	{
-		for (int i = 0; i < UnitArray.length; i++)
-		{	UnitArray [i].sight = 60;}
+		for (Unit element : UnitArray)
+		{	element.sight = 60;}
 		return UnitArray;
 	}
 	
@@ -406,7 +350,7 @@ public class Operations
 /*********** - bestimmte Einheit erstellen (nur für linasSetFrame) - ***********/
 	public Unit setUnit (File sFile, String Name, boolean IsServer)
 	{
-		Unit UnitType 			= new Unit ();
+		Unit UnitType;
 		
 		linasString [] values 	= new linasString [25];
         String germanName = null, germanDescription = null;
@@ -422,12 +366,12 @@ public class Operations
                 else if (n < values.length) values[n++] = new linasString(bigCut(line));
             }
 
-			for (int i1 = 0; i1 < values.length; i1++)
+			for (linasString element : values)
 			{
-				for (int i2 = 0; i2 < values[i1].getL(); i2++)
+				for (int i2 = 0; i2 < element.getL(); i2++)
 				{	
-					if (values[i1].getS(i2).isEmpty())
-					{	values[i1].setS(i2, values[i1].getS(0));}
+					if (element.getS(i2).isEmpty())
+					{	element.setS(i2, element.getS(0));}
 				}
 			}
 
@@ -458,79 +402,14 @@ public class Operations
             UnitType.GermanDescription = germanDescription;
 		}
 		catch (IOException e)
-		{}
-		//Ausgabe (UnitType, IsServer);
+        {
+            throw new java.io.UncheckedIOException("Cannot read unit definition: " + sFile, e);
+        }
+
 		return UnitType;
 	}
 	
-/*********** - Einheitenausgabe - ***********/		
-	public void Ausgabe (Unit u, boolean IsServer)
-	{
-		System.out.println ("Einheit:	" + u.type);
-		System.out.println ("Preis:		" + u.price);
-		System.out.print ("TP:		");
-		for (int i0 = 0; i0 < 5; i0++)
-		{	System.out.print (u.tpA[i0] + "	");}
-		for (int i1 = 0; i1 < 3; i1++)
-		{	System.out.print ("\nArmour" + (i1+1) + ":	" + u.ArmourType[i1]);}
-		System.out.print ("");
-		System.out.print ("\nArmour1	");
-		for (int i2 = 0; i2 < 5; i2++)
-		{	System.out.print ("	" + u.armourA[i2][0]);}
-		System.out.print ("\nArmour2	");
-		for (int i3 = 0; i3 < 5; i3++)
-		{	System.out.print ("	" + u.armourA[i3][1]);}
-		System.out.print ("\nArmour3	");
-		for (int i4 = 0; i4 < 5; i4++)
-		{	System.out.print ("	" + u.armourA[i4][2]);}
-		System.out.print ("\nDam	");
-		for (int i5 = 0; i5 < 5; i5++)
-		{	System.out.print ("	" + u.damA[i5]);}
-		System.out.print ("\nDamType	");
-		for (int i6 = 0; i6 < 5; i6++)
-		{	System.out.print ("	" + u.damTypeA[i6]);}
-		System.out.print ("\nADM	");
-		for (int i7 = 0; i7 < 5; i7++)
-		{	System.out.print ("	" + u.admA[i7]);}
-		System.out.print ("\nRW max	");
-		for (int i8 = 0; i8 < 5; i8++)
-		{	System.out.print ("	" + u.rwA[i8][1]);}
-		System.out.print ("\nRW min	");
-		for (int i9 = 0; i9 < 5; i9++)
-		{	System.out.print ("	" + u.rwA[i9][0]);}
-		System.out.print ("\nradius	");
-		for (int i10 = 0; i10 < 5; i10++)
-		{	System.out.print ("	" + u.rwA[i10][2]);}
-		System.out.print ("\nDistMod	");
-		for (int i11 = 0; i11 < 5; i11++)
-		{	
-			for (int k = 0; k < u.rwTypeA[i11].length; k++)
-			{	System.out.print (u.rwTypeA[i11][k] + ", ");}
-			System.out.print ("	");
-		}
 
-		System.out.print ("\nSight	");
-		for (int i12 = 0; i12 < 5; i12++)
-		{	System.out.print ("	" + u.sightA[i12]);}
-		System.out.print ("\nCamouflage");
-		for (int i13 = 0; i13 < 5; i13++)
-		{	System.out.print ("	" + u.camouflageA[i13]);}
-		System.out.print ("\nZP0	");
-		for (int i14 = 0; i14 < 5; i14++)
-		{	System.out.print ("	" + u.zpA[i14][0]);}
-		System.out.print ("\nZP1	");
-		for (int i15 = 0; i15 < 5; i15++)
-		{	System.out.print ("	" + u.zpA[i15][1]);}
-		System.out.print ("\nZP2	");
-		for (int i16 = 0; i16 < 5; i16++)
-		{	System.out.print ("	" + u.zpA[i16][2]);}
-		System.out.print ("\nBild	");
-		for (int i17 = 0; i17 < 5; i17++)
-		{	
-			if (IsServer)	System.out.print ("	" + u.pictureAS[i17]);
-			else					System.out.print ("	" + u.pictureAC[i17]);
-		}			
-	}
 
 /*********** - Umwandlungen - ***********/	
 	public int [] toIntA (linasString lS)
@@ -630,12 +509,12 @@ public class Operations
 		if (!IsServer)
 		{
 			for (int i1 = 0; i1 < P1UnitNum; i1++)
-			{	if (!UnitArray [i1].visible)	ready = false;}
+			{	if (!UnitArray [i1].visible) { ready = false; break; }}
 		}
 		if (IsServer)
 		{
 			for (int i2 = P1UnitNum; i2 < UnitArray.length; i2++)
-			{	if (!UnitArray [i2].visible)	ready = false;}
+			{	if (!UnitArray [i2].visible) { ready = false; break; }}
 		}
 		return ready;
 	}
@@ -645,9 +524,9 @@ public class Operations
 	{
 		int num = 0;
 		
-		for (int i = 0; i < UnitArray.length; i++)
+		for (Unit element : UnitArray)
 		{
-			if ((UnitArray [i].player.equals (Player)) && ((UnitArray [i].type + UnitArray [i].DamType).equals (Unit)))
+			if ((element.player.equals (Player)) && ((element.type + element.DamType).equals (Unit)))
 			{	num++;}
 		}
 		return num;

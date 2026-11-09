@@ -5,6 +5,9 @@ import javax.swing.*;
 
 /** Edits a private draft; only Save changes the active bindings. */
 public final class KeypadConfiguration extends JDialog {
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
     private int[] draft = KeyBindings.snapshot();
     private final JButton[] buttons = new JButton[draft.length];
     private final JLabel status = new JLabel(" ");
@@ -24,7 +27,7 @@ public final class KeypadConfiguration extends JDialog {
             int index = command.ordinal();
             rows.add(new JLabel(command.label()));
             buttons[index] = new JButton();
-            buttons[index].addActionListener(event -> {
+            buttons[index].addActionListener(ignored -> {
                 listening = index;
                 refresh();
                 status.setText(text("Press a key. Escape cancels capture.", "Taste drücken. Escape bricht die Eingabe ab."));
@@ -39,11 +42,11 @@ public final class KeypadConfiguration extends JDialog {
         footer.add(status, BorderLayout.CENTER);
         JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton reset = new JButton(text("Restore defaults", "Standard wiederherstellen"));
-        reset.addActionListener(event -> { listening = -1; draft = KeyBindings.defaults(); refresh(); status.setText(" "); });
+        reset.addActionListener(ignored -> { listening = -1; draft = KeyBindings.defaults(); refresh(); status.setText(" "); });
         JButton cancel = new JButton(text("Cancel", "Abbrechen"));
-        cancel.addActionListener(event -> dispose());
+        cancel.addActionListener(ignored -> dispose());
         JButton save = new JButton(text("Save", "Speichern"));
-        save.addActionListener(event -> {
+        save.addActionListener(ignored -> {
             if (listening >= 0) return;
             try { KeyBindings.save(draft); dispose(); }
             catch (BackingStoreException | SecurityException ex) {

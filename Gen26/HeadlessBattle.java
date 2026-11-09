@@ -6,7 +6,6 @@ import java.util.*;
 public final class HeadlessBattle {
     private final Operations op = new Operations();
     private final Random random;
-    private final Map<String, Path> catalogue;
     private final Unit[] units;
     private final String[] types;
     private final int split, maxTurns, maxSteps;
@@ -47,7 +46,7 @@ public final class HeadlessBattle {
         Set<String> allowed = Set.of("armies", "positions", "fog", "maxTurns", "maxSteps");
         if (!allowed.containsAll(config.keySet())) throw new IllegalArgumentException("Unknown match configuration field");
         random = new Random(seed);
-        catalogue = unitFiles();
+        Map<String, Path> catalogue = unitFiles();
         maxTurns = RlJson.bounded(config.getOrDefault("maxTurns", 200), 1, 10000);
         maxSteps = RlJson.bounded(config.getOrDefault("maxSteps", 5000), 1, 1000000);
         Object fogValue = config.getOrDefault("fog", false);
@@ -96,8 +95,8 @@ public final class HeadlessBattle {
         }
     }
     private int owner(int id) { return id < split ? 0 : 1; }
-    private boolean visible(int id, int player) {
-        return owner(id) == player || !fog || op.PointVisibility(units, split, player == 1,
+    private boolean hidden(int id, int player) {
+        return owner(id) != player && fog && !op.PointVisibility(units, split, player == 1,
             units[id].PosX, units[id].PosY, units[id].camouflage);
     }
     private static List<Integer> ints(int[] values) {
@@ -119,7 +118,7 @@ public final class HeadlessBattle {
         if (player < 0 || player > 1) throw new IllegalArgumentException("player must be 0 or 1");
         List<Object> seen = new ArrayList<>();
         for (int id = 0; id < units.length; id++) {
-            if (!visible(id, player)) continue;
+            if (hidden(id, player)) continue;
             Unit u = units[id];
             Map<String, Object> info = stats(u);
             info.putAll(RlJson.object("id", id, "player", owner(id), "unitType", types[id],
@@ -135,7 +134,7 @@ public final class HeadlessBattle {
         if (!BattleRules.canMove(u, direction)) return false;
         int occupant = op.occupied(u.PosX + BattleRules.DX[direction], u.PosY + BattleRules.DY[direction], units);
         // A mask must not disclose an unseen enemy's position. A blocked attempt is a no-op.
-        return occupant == -1 || !visible(occupant, currentPlayer);
+        return occupant == -1 || hidden(occupant, currentPlayer);
     }
     public List<Map<String, Object>> legalActions() {
         List<Map<String, Object>> actions = new ArrayList<>();
@@ -193,7 +192,9 @@ public final class HeadlessBattle {
         for (int id = 0; id < units.length; id++) if (units[id].TP > 0) alive[owner(id)] = true;
         if (!alive[0] || !alive[1]) {
             terminated = true; truncated = false;
-            winner = alive[0] ? 0 : alive[1] ? 1 : null;
+            if (alive[0]) winner = 0;
+            else if (alive[1]) winner = 1;
+            else winner = null;
             reason = winner == null ? "mutual_elimination" : "elimination";
         } else if (!truncated && steps >= maxSteps) { truncated = true; reason = "step_limit"; }
         Map<String, Object> response = view();

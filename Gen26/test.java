@@ -8,13 +8,14 @@ import javax.swing.*;
 /*	zu startende Klasse, um Linas zu starten	
  */
  
-public class test
+public final class test
 {
+    private test() {}
 	static String s = "";
 	
 /*********** - Constructor, laden des Startbildschirms - ***********/
 
-	public test ()
+	private static void showTestWindow ()
 	{
 		if (s.equals ("Gameoptions"))	
 		{
@@ -41,8 +42,8 @@ public class test
 		try
 		{	UIManager.setLookAndFeel (UIManager.getSystemLookAndFeelClassName());}
 		catch (Exception e)
-		{	e.printStackTrace ();}
+		{	System.getLogger(test.class.getName()).log(System.Logger.Level.WARNING, "Cannot set system look and feel", e);}
 		s = args [0];
-		new test ();
+		SwingUtilities.invokeLater(test::showTestWindow);
 	}
 }

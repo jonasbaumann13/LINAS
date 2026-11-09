@@ -8,8 +8,11 @@ import javax.swing.*;
  *	ein eventueller Sieg gesteuert.	
  */
 
-public class MainFrame extends JFrame implements ActionListener
+public final class MainFrame extends JFrame implements ActionListener
 {
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
 	//Layoutkomponenten
 	JPanel contentPane;
 	ImageIcon iHeading;
@@ -22,27 +25,26 @@ public class MainFrame extends JFrame implements ActionListener
 	Color C 				= Color.black;
 	Color CExit 			= Color.red;
 	Color CEnemy 			= new Color (255, 33, 16);
-	Font FPlayer 			= new Font ("Verdana", 1, 16);
-	Font F 					= new Font ("Garamond", 1, 14);
+	Font FPlayer 			= new Font ("Verdana", Font.BOLD, 16);
+	Font F 					= new Font ("Garamond", Font.BOLD, 14);
 	//andere Komponenten
 	boolean IsServer;							// Server oder Client
 	String [] Player 		= new String [2];	// Feld mit Spielernamen
-	ObjectOutputStream Out 	= null;				// Ausgabestrom
-	Object [] forSending 	= new Object [2];	// zu verschickendes Objekt
-	MouseAdapter MA 		= null;
-	KeyAdapter KA 			= null;
+	transient ObjectOutputStream Out;				// Ausgabestrom
+	transient Object [] forSending 	= new Object [2];	// zu verschickendes Objekt
+	transient MouseAdapter MA 		= null;
+	transient KeyAdapter KA 			= null;
 	int UC 					= 0;				// (unit-counter) um zu Ermitteln, welche Einheit gerade dran ist
 	int [] UnCo 			= new int [1];	
 	int P1UnitNum, P2UnitNum;					// Anzahl der Einheiten beider Spieler
-	int xy [] 				= new int [3];		// Feld für Koordinaten		
-	int MouseX, MouseY;							// Mouskoordinaten
+	int[] xy 				= new int [3];		// Feld für Koordinaten
 	boolean keyNext 		= true;				// ob "+" auf Tastatur aktiviert ist
 	boolean keyEndTurn		= true;				// ob "Enter" auf Tastatur aktiviert ist
 	boolean wait;								// ob Spieler gerade wartet
 	boolean end 			= false;			// ob bereits ein Sieger feststeht
 	Unit [] UnitArray;							// Einheitenfeld
-	Operations op;								// Methodensammlung
-	Message msg;								// Fehlermeldung
+	transient Operations op;								// Methodensammlung
+	transient Message msg;								// Fehlermeldung
 
 /*********** - Layoutaufbau im Constructor und spezifische Starteinstellungen - ***********/
 
@@ -138,7 +140,7 @@ public class MainFrame extends JFrame implements ActionListener
 		if (!IsServer)								// nur für Client
 		{	
 			JLAInfoV [0].setText (Player [0]);
-			JBA [1].setLabel (I18n.text("End turn"));
+			JBA [1].setText (I18n.text("End turn"));
 			UC = 0;
 			newInfo ();											// Informationen zur jeweiligen Einheit
 			wait = false;
@@ -147,7 +149,7 @@ public class MainFrame extends JFrame implements ActionListener
 		{	
 			JBA [0].setEnabled (false);
 			JBA [1].setEnabled (false);
-			JBA [1].setLabel (I18n.text("Waiting for client..."));
+			JBA [1].setText (I18n.text("Waiting for client..."));
 			JLAInfoV [0].setText (Player [1]);
 			keyNext 	= false;
 			keyEndTurn 	= false;
@@ -219,8 +221,8 @@ public class MainFrame extends JFrame implements ActionListener
 	public void EndTurn ()
 	{
 		send ("EndTurn");										// dies dem anderen Spieler mitteilen
-		if (!IsServer)		JBA [1].setLabel (I18n.text("Waiting for server"));
-		if (IsServer)		JBA [1].setLabel (I18n.text("Waiting for client"));
+		if (!IsServer)		JBA [1].setText (I18n.text("Waiting for server"));
+		if (IsServer)		JBA [1].setText (I18n.text("Waiting for client"));
 		UC 			= -1;										// keine Einheit angewählt lassen
 		JBA [0].setEnabled (false);
 		JBA [1].setEnabled (false);
@@ -236,13 +238,19 @@ public class MainFrame extends JFrame implements ActionListener
 
 	public void startTurn (Unit [] UA)
 	{
-		if (!IsServer)		UC = 0;
-		if (IsServer)		UC = P1UnitNum;
-		while ((UnitArray [UC].TP <= 0) && (UC <= UnitArray.length))		// Auswählen der nächsten lebenden Einheit
-		{	UC++;}
-				
-		JBA [1].setLabel (I18n.text("End turn"));
-		UnitArray 	= UA;
+        UnitArray = UA;
+        int first = IsServer ? P1UnitNum : 0;
+        int limit = IsServer ? UnitArray.length : P1UnitNum;
+        UC = first;
+        while (UC < limit && UnitArray[UC].TP <= 0) UC++;
+        if (UC == limit) {
+            wait = true;
+            UC = first;
+            sieg(false);
+            return;
+        }
+
+		JBA [1].setText (I18n.text("End turn"));
 		wait 		= false;
 		JBA [0].setEnabled (true);
 		JBA [1].setEnabled (true);
@@ -291,7 +299,7 @@ public class MainFrame extends JFrame implements ActionListener
 		xy = op.koAngleich (e.getX (), e.getY ());					// Koordinaten modifizieren
 		int tmpUC = op.occupied (xy [0], xy [1], UnitArray);		// test, ob Feld besetzt ist
 
-		if ((tmpUC != -1) && (UnitArray [tmpUC].visible == true) && (UnitArray [tmpUC].TP > 0))		// wenn vorhanden, sichtbar, lebend
+		if ((tmpUC != -1) && (UnitArray [tmpUC].visible) && (UnitArray [tmpUC].TP > 0))		// wenn vorhanden, sichtbar, lebend
 		{
 			if ((!IsServer && (tmpUC < P1UnitNum)) || (IsServer && (tmpUC >= P1UnitNum)))
 			{														// eigene Einheit angeklickt
@@ -374,8 +382,8 @@ public class MainFrame extends JFrame implements ActionListener
 	
 	public void newEnemyInfo (int tmpUC)
 	{
-		for (int j = 0; j < UnitArray.length; j++)	// ersteinmal alle auf nichtausgewählt stellen
-		{	UnitArray [j].ESelected = false;}
+		for (Unit element : UnitArray)	// ersteinmal alle auf nichtausgewählt stellen
+		{	element.ESelected = false;}
 		
 		if (tmpUC == -1)							// keiner ausgewählt
 		{
@@ -390,7 +398,7 @@ public class MainFrame extends JFrame implements ActionListener
 			{	lEInfo.setText (I18n.text("Selected enemy (") + Player [0] + ")");}
 			else
 			{	lEInfo.setText (I18n.text("Selected enemy (") + Player [1] + ")");}
-			JLAInfoV [8].setText ("" + UnitArray [tmpUC].getDisplayName());
+			JLAInfoV [8].setText (UnitArray [tmpUC].getDisplayName());
 			JLAInfoV [9].setText ("" + UnitArray [tmpUC].TP);
 			UnitArray [tmpUC].ESelected = true;
 		}
@@ -434,13 +442,13 @@ public class MainFrame extends JFrame implements ActionListener
 		if (!IsServer)
 		{
 			for (int i2 = P1UnitNum; i2 < UnitArray.length; i2++)
-			{	if (UnitArray [i2].TP > 0)	lD = false;}
+			{	if (UnitArray [i2].TP > 0) { lD = false; break; }}
 		}
 		
 		if (IsServer)
 		{
 			for (int i1 = 0; i1 < P1UnitNum; i1++)
-			{	if (UnitArray [i1].TP > 0)	lD = false;}
+			{	if (UnitArray [i1].TP > 0) { lD = false; break; }}
 		}
 		
 		if (lD)		sieg (true);					// wenn, dann Sieg verkünden (s.o.)
@@ -451,18 +459,18 @@ public class MainFrame extends JFrame implements ActionListener
 	public void send (String Command)
 	{
 		UnCo [0] = UC;
-		forSending [0] = (Object) Command;
-		forSending [1] = (Object) UnitArray;
-		
-		if (Command.equals ("Flame"))		forSending [1] = (Object) xy;
-		if (Command.equals ("EnemyFire"))	forSending [1] = (Object) UnCo;
+		forSending [0] = Command;
+		forSending [1] = UnitArray;
+
+		if (Command.equals ("Flame"))		forSending [1] = xy;
+		if (Command.equals ("EnemyFire"))	forSending [1] = UnCo;
 					
 		try
 		{	
 			Out.reset ();							// damit vorhandene Daten im OutputStream erst gelöscht und nicht mitgesendet werden
-			Out.writeObject ((Object) forSending);	// in OutputStream schreiben
+			Out.writeObject (forSending);	// in OutputStream schreiben
 			Out.flush ();							// alles im OutputStram verschicken
 		}
-		catch (IOException e2)		{System.out.println (e2);}
+		catch (IOException e2)		{System.getLogger(getClass().getName()).log(System.Logger.Level.ERROR, "Operation failed", e2);}
 	}
 }

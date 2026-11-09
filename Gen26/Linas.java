@@ -8,11 +8,12 @@ import javax.swing.*;
 /*	zu startende Klasse, um Linas zu starten	
  */
  
-public class Linas
+public final class Linas
 {
+    private Linas() {}
 /*********** - Constructor, laden des Startbildschirms - ***********/
 
-	public Linas ()
+	private static void showMenu ()
 	{
 		Menu StartFrame = new Menu ();
 		StartFrame.setLocation (100, 100);
@@ -39,8 +40,8 @@ public class Linas
 		try
 		{	UIManager.setLookAndFeel (UIManager.getSystemLookAndFeelClassName());}
 		catch (Exception e)
-		{	e.printStackTrace ();}
-		new Linas ();
+		{	System.getLogger(Linas.class.getName()).log(System.Logger.Level.WARNING, "Cannot set system look and feel", e);}
+		SwingUtilities.invokeLater(Linas::showMenu);
 	}
 }
 

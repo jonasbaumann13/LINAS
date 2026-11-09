@@ -12,8 +12,11 @@ import java.net.*;
  * enthält
  */
 
-public class Description extends JFrame implements ActionListener
+public final class Description extends JFrame implements ActionListener
 {
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
+
 	//Layoutkomponenten
 	JPanel contentPane;
 	JLabel [] JLAInfo;
@@ -24,17 +27,16 @@ public class Description extends JFrame implements ActionListener
 	JButton bLast, bNext, bBack;
 	ImageIcon iHeading, iUnit, iNext, iLast;
 	Color C 		= Color.black;
-	Color CExit 	= Color.red;
 	Color CBlue 	= new Color (41, 41, 255);
-	Font F 			= new Font ("Garamond", 1, 14);
-	Font FKursiv 	= new Font ("Monotype Corsiva", 1, 18);
-	Font FP 		= new Font ("Verdana", 1, 16);
+	Font F 			= new Font ("Garamond", Font.BOLD, 14);
+	Font FKursiv 	= new Font ("Monotype Corsiva", Font.BOLD, 18);
+	Font FP 		= new Font ("Verdana", Font.BOLD, 16);
 
 	//andere Komponenten
 	int UC;
 	Unit [] bspU;
-	Message msg;						// Klasse für Fehlermeldungen
-	Operations op;						// Methodensammlung
+	transient Message msg;						// Klasse für Fehlermeldungen
+	transient Operations op;						// Methodensammlung
 	
 	public Description (Unit [] bspU, int UC)
 	{
@@ -91,7 +93,7 @@ public class Description extends JFrame implements ActionListener
 		JLAInfo [5].setText (I18n.text("Maximum Damage:"));
 		JLAInfo [6].setText (I18n.text("Damage type:"));
 		JLAInfo [7].setText (I18n.text("Factor for area damage:"));
-		JLAInfo [8].setText (I18n.text("range:"));								////////////////////////////
+		JLAInfo [8].setText (I18n.text("range:"));
 		JLAInfo [9].setText (I18n.text("Area damage radius:"));
 		JLAInfo [10].setText (I18n.text("Sight range:"));
 		JLAInfo [11].setText (I18n.text("Camouflage:"));

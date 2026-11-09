@@ -8,25 +8,28 @@ import java.util.*;
  * Hier wird alles gezeichnet und auf den Bildschirm gebracht, was auf dem Spielfeld passiert
  */
 
-public class Spielfeld extends JComponent
+public final class Spielfeld extends JComponent
 {
-	Image hexa 			= getToolkit ().getImage (AppPaths.asset("Pics/Spielbrett.gif"));
-	Image ESelected 	= getToolkit ().getImage (AppPaths.asset("Pics/Selected.gif"));
-	Image Turn 			= getToolkit ().getImage (AppPaths.asset("Pics/Turn.gif"));
-	Image MG 			= getToolkit ().getImage (AppPaths.asset("Pics/MG.gif"));
-	Image AT 			= getToolkit ().getImage (AppPaths.asset("Pics/AT.gif"));
-	Image Mortar 		= getToolkit ().getImage (AppPaths.asset("Pics/LR.gif"));
-	//Schadensmodelle
-	Image perCent100 	= getToolkit ().getImage (AppPaths.asset("Pics/100perCent.gif"));
-	Image perCent75 	= getToolkit ().getImage (AppPaths.asset("Pics/75perCent.gif"));
-	Image perCent50 	= getToolkit ().getImage (AppPaths.asset("Pics/50perCent.gif"));
-	Image perCent25 	= getToolkit ().getImage (AppPaths.asset("Pics/25perCent.gif"));
-	Image perCent00 	= getToolkit ().getImage (AppPaths.asset("Pics/00perCent.gif"));
-	Image destroyed 	= getToolkit ().getImage (AppPaths.asset("Pics/Schrott.gif"));
+    @java.io.Serial
+    private static final long serialVersionUID = 1L;
 
-	Image Shadow 		= getToolkit ().getImage (AppPaths.asset("Pics/ShadowOfWar.gif"));
-	Image Explosion 	= getToolkit ().getImage (AppPaths.asset("Pics/Explosion2.gif"));
-	Image [] IMG;
+	transient Image hexa 			= Toolkit.getDefaultToolkit().getImage (AppPaths.asset("Pics/Spielbrett.gif"));
+	transient Image ESelected 	= Toolkit.getDefaultToolkit().getImage (AppPaths.asset("Pics/Selected.gif"));
+	transient Image Turn 			= Toolkit.getDefaultToolkit().getImage (AppPaths.asset("Pics/Turn.gif"));
+	transient Image MG 			= Toolkit.getDefaultToolkit().getImage (AppPaths.asset("Pics/MG.gif"));
+	transient Image AT 			= Toolkit.getDefaultToolkit().getImage (AppPaths.asset("Pics/AT.gif"));
+	transient Image Mortar 		= Toolkit.getDefaultToolkit().getImage (AppPaths.asset("Pics/LR.gif"));
+	//Schadensmodelle
+	transient Image perCent100 	= Toolkit.getDefaultToolkit().getImage (AppPaths.asset("Pics/100perCent.gif"));
+	transient Image perCent75 	= Toolkit.getDefaultToolkit().getImage (AppPaths.asset("Pics/75perCent.gif"));
+	transient Image perCent50 	= Toolkit.getDefaultToolkit().getImage (AppPaths.asset("Pics/50perCent.gif"));
+	transient Image perCent25 	= Toolkit.getDefaultToolkit().getImage (AppPaths.asset("Pics/25perCent.gif"));
+	transient Image perCent00 	= Toolkit.getDefaultToolkit().getImage (AppPaths.asset("Pics/00perCent.gif"));
+	transient Image destroyed 	= Toolkit.getDefaultToolkit().getImage (AppPaths.asset("Pics/Schrott.gif"));
+
+	transient Image Shadow 		= Toolkit.getDefaultToolkit().getImage (AppPaths.asset("Pics/ShadowOfWar.gif"));
+	transient Image Explosion 	= Toolkit.getDefaultToolkit().getImage (AppPaths.asset("Pics/Explosion2.gif"));
+	transient Image [] IMG;
 	Color cBlue 		= new Color (41, 41, 255);
 	String [] ArmourType;
 	
@@ -39,7 +42,7 @@ public class Spielfeld extends JComponent
 	boolean setShadowP2 = false;
 	boolean shot 		= false;				// ob ein Schuss gezeichnet werden soll
 	boolean main;
-	Operations op 		= new Operations ();	// Methodensammlung
+	transient Operations op 		= new Operations ();	// Methodensammlung
 	Unit [] UA;									// Einheitenfeld
 			
 /*********** - Einheitenanzahl setzen - ***********/
@@ -63,9 +66,9 @@ public class Spielfeld extends JComponent
 		try
 		{	
 			for (int i = 0; i < UA.length; i++)
-			{	IMG [i] = getToolkit ().getImage (AppPaths.asset("Units/" + UnitArray [i].Picture));}
+			{	IMG [i] = Toolkit.getDefaultToolkit().getImage (AppPaths.asset("Units/" + UnitArray [i].Picture));}
 		}
-		catch (NullPointerException e1)		{System.out.println (e1);}
+		catch (NullPointerException e1)		{System.getLogger(getClass().getName()).log(System.Logger.Level.ERROR, "Operation failed", e1);}
 	}
 	
 /*********** - nicht setzbare Felder setzen - ***********/
@@ -80,8 +83,8 @@ public class Spielfeld extends JComponent
 			setShadowP2 = true;
 		}
 		
-		for (int j = 0; j < UA.length; j++)
-		{	UA [j].visible = false;}
+		for (Unit element : UA)
+		{	element.visible = false;}
 		repaint ();
 	}
 
@@ -119,7 +122,7 @@ public class Spielfeld extends JComponent
 			border [n][0] = 0;
 			border [n][1] = -1;
 			border [n][2] = -1;
-			if ((UA [n].visible == true) && (UA [n].TP > 0))
+			if ((UA [n].visible) && (UA [n].TP > 0))
 			{	
 				Brett.drawImage (IMG [n], UA [n].PosX, UA [n].PosY, this);
 				if (UA [n].ESelected)			border [n][0] = 1;
@@ -190,9 +193,9 @@ public class Spielfeld extends JComponent
 				
 		for (int o = 0; o < UA.length; o++)			// setzt die zur Einheit dazugehörigen Lebensppunkte (grün-roter Balkn)
 		{	
-			if ((UA [o].visible == true) && (UA [o].obstacleAD))
+			if ((UA [o].visible) && (UA [o].obstacleAD))
 			{
-				DamPro = (int) ((UA [o].TP * 100) / UA [o].basicTP);
+				DamPro = (UA [o].TP * 100) / UA [o].basicTP;
 				
 				if (DamPro == 100)
 				{	Brett.drawImage (perCent100, UA [o].PosX, UA [o].PosY, this);}
@@ -207,7 +210,7 @@ public class Spielfeld extends JComponent
 				if (UA [o].TP <= 0)
 				{	Brett.drawImage (destroyed, UA [o].PosX, UA [o].PosY, this);}		// setzt Schrotthaufen
 			}
-			if ((UA [o].visible == true) && (UA [o].TP > 0))
+			if ((UA [o].visible) && (UA [o].TP > 0))
 			{
 				if (!IsServer && (o < UN1))
 				{
