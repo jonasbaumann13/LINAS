@@ -22,7 +22,7 @@ public class Gameoptions extends JFrame implements ActionListener
 	JTextArea TAChat;
 	JScrollPane SPChat, SPUnits;
 	DefaultListModel LiMUnits;
-	JCheckBox CBA[] 		= new JCheckBox[3];
+	JCheckBox CBA[] 		= new JCheckBox[1];
 	ExampleFileFilter filter;
 	JFileChooser FCUnits;
 	Color CBlue				= Color.blue;
@@ -73,7 +73,6 @@ public class Gameoptions extends JFrame implements ActionListener
 		ContentPane = (JPanel) this.getContentPane ();				ContentPane.setLayout (null);
 		ContentPane.setBackground (new Color (213, 222, 242));		Msg 		= new Message ();
 		CBA[0]		= new JCheckBox (I18n.text("Fog of war"));
-		CBA[1]		= new JCheckBox (I18n.text("Transfer own units"));			CBA[2]		= new JCheckBox (I18n.text("Transfer own pictures"));
 		IHeading	= new ImageIcon (AppPaths.asset("Pics/linasHeaderS.gif"));		LiMUnits	= new DefaultListModel ();
 		BExit 		= new JButton (I18n.text("Exit"));							ContentPane.add (BExit);
 		BStart 		= new JButton (I18n.text("Accept"));						ContentPane.add (BStart);
@@ -104,11 +103,11 @@ public class Gameoptions extends JFrame implements ActionListener
 			ContentPane.add (LA[l]);			
 		}
 		
-		for (int c = 0; c < 3; c++)
+		for (int c = 0; c < CBA.length; c++)
 		{
 			CBA[c].setFont (FGara);
 			CBA[c].setForeground (CBlack);
-			if ((IsServer)||(c==0))					ContentPane.add (CBA[c]);			
+			ContentPane.add (CBA[c]);			
 		}
 		
 		LA[1].setText (I18n.text("Credits available"));
@@ -139,8 +138,8 @@ public class Gameoptions extends JFrame implements ActionListener
 		TFCredit.setBounds 	(10, 100, 50, 20);			LA[2].setBounds		(300, 100, 240, 20);
 		LA[1].setBounds 	(70, 100, 220, 25);			SPUnits.setBounds	(300, 130, 225, 85);
 		CBA[0].setBounds 	(10, 130, 270, 25);			BFileAdd.setBounds	(300, 225, 100, 20);
-		CBA[1].setBounds 	(10, 190, 270, 25);			BFileDel.setBounds	(405, 225, 51, 20);
-		CBA[2].setBounds 	(10, 220, 270, 25);			BFileInfo.setBounds (460, 225, 51, 20);
+					BFileDel.setBounds	(405, 225, 51, 20);
+					BFileInfo.setBounds (460, 225, 51, 20);
 		LA[3].setBounds		(12, 260, 160, 25);			TFChat.setBounds	(300, 335, 225, 20);
 		LA[4].setBounds		(98, 260, 160, 25);			BStart.setBounds	(300, 365, 90, 25);
 		SPChat.setBounds	(10, 290, 250, 100);		BExit.setBounds		(435, 365, 90, 25);									
@@ -181,8 +180,6 @@ public class Gameoptions extends JFrame implements ActionListener
 			TFCredit.setFocusable (false);
 			LA[4].setText (NickC);
 			CBA[0].setEnabled (false);
-			CBA[1].setEnabled (false);
-			CBA[2].setEnabled (false);
 		}
 	}
 		
